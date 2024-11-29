@@ -34,9 +34,9 @@
 
 - Backend
 
-  - [ ] Design APIs
+  - [x] Design APIs
+    - [ ] Auth
     - [ ] User
-      - [ ] Auth
       - [ ] Order History (with Status)
       - [ ] Shopping Cart
       - [ ] Wishlist
