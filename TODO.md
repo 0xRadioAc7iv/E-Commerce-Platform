@@ -35,7 +35,7 @@
 - Backend
 
   - [x] Design APIs
-    - [ ] Auth
+    - [x] Auth
     - [ ] User
       - [ ] Order History (with Status)
       - [ ] Shopping Cart

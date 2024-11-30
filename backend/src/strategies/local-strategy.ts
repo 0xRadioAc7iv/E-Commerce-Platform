@@ -1,6 +1,6 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
-import { comparePasswords } from "../lib/passwordHelpers";
+import { compareText } from "../lib/hashing";
 import pool from "../db";
 
 type User = {
@@ -19,7 +19,8 @@ passport.deserializeUser(async (email, done) => {
     ]);
 
     const user = result.rows[0];
-    if (!user) throw new Error("User not found");
+    if (!user) return done(null, false);
+
     done(null, user);
   } catch (error) {
     done(error, false);
@@ -36,13 +37,22 @@ export default passport.use(
           [email]
         );
         const user = result.rows[0];
-        if (!user) throw new Error("User not found");
 
-        if (!comparePasswords(password, user.password))
-          throw new Error("Invalid Credentials");
-        done(null, user);
+        if (!user) {
+          return done(null, false, { message: "Invalid email or password" });
+        }
+
+        const isPasswordValid = compareText(password, user.password);
+        if (!isPasswordValid) {
+          return done(null, false, { message: "Invalid email or password" });
+        }
+
+        return done(null, user);
       } catch (error) {
-        done(error, false);
+        console.error("Authentication error:", error);
+        return done(null, false, {
+          message: "An error occurred. Please try again later.",
+        });
       }
     }
   )
