@@ -10,11 +10,10 @@
     - Filter
       - By Price
       - Category
-  - Explore (Hardcoded Products for now)
+  - Explore (Returns a predetermined list of Products for now)
 - Shopping Cart
 - Payments (Stripe)
 - Wishlist
-  - Saved for logged-in users
 - User Order History
   - View Order Status (e.g., Processing, Shipped, Delivered)
 - Admin Interface (for development)
@@ -42,14 +41,14 @@
       - [ ] Wishlist
     - [ ] Products
     - [ ] Payments
-    - [ ] Admin
-      - [ ] Products
+    - [x] Admin
+      - [x] Products
       - [ ] Orders
-  - [ ] Design DB Schemas
-    - [ ] Users
-    - [ ] Products
-    - [ ] Payments
-    - [ ] Orders
+  - [x] Design DB Schemas
+    - [x] Users
+    - [x] Products
+    - [x] Payments
+    - [x] Orders
   - [ ] Stripe Integration
   - [ ] API Testing (Postman/Thunder Client/Automated)
 
