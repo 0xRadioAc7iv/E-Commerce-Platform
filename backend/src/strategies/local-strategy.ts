@@ -4,12 +4,13 @@ import { compareText } from "../lib/hashing";
 import pool from "../db";
 
 type User = {
+  id: number;
   email: string;
   password: string;
 };
 
 passport.serializeUser((user, done) => {
-  done(null, (user as User).email);
+  done(null, (user as User).id);
 });
 
 passport.deserializeUser(async (email, done) => {

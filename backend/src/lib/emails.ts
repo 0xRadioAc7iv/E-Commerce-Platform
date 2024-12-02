@@ -17,6 +17,6 @@ export const sendEmail = async (
       html: `<h2>${message}</h2>`,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };

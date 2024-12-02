@@ -36,10 +36,10 @@
   - [x] Design APIs
     - [x] Auth
     - [ ] User
-      - [ ] Order History (with Status)
+      - [x] Order History (with Status)
       - [ ] Shopping Cart
       - [ ] Wishlist
-    - [ ] Products
+    - [x] Products
     - [ ] Payments
     - [x] Admin
       - [x] Products
@@ -50,7 +50,6 @@
     - [x] Payments
     - [x] Orders
   - [ ] Stripe Integration
-  - [ ] API Testing (Postman/Thunder Client/Automated)
 
 - Deployment
   - [ ] Frontend
