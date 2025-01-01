@@ -1,57 +1,29 @@
 ## MVP
 
-### Features
-
-- User Auth
-  - Email and Password
-  - Forgot Password
-- Product
-  - Search
-    - Filter
-      - By Price
-      - Category
-  - Explore (Returns a predetermined list of Products for now)
-- Shopping Cart
-- Payments (Stripe)
-- Wishlist
-- User Order History
-  - View Order Status (e.g., Processing, Shipped, Delivered)
-- Admin Interface (for development)
-  - Products Management
-    - Add/Edit/Delete Products
-  - Order Management
-    - Confirm/Ship/Deliver Orders
-
-### Planning
-
-- Frontend
-
-  - [ ] Get Design
-  - [ ] Build for Desktop
-  - [ ] Make it Responsive (Mobile-first design)
-  - [ ] API Integration
-
-- Backend
-
-  - [x] Design APIs
-    - [x] Auth
-    - [ ] User
-      - [x] Order History (with Status)
-      - [ ] Shopping Cart
-      - [ ] Wishlist
-    - [x] Products
-    - [ ] Payments
-    - [x] Admin
-      - [x] Products
-      - [ ] Orders
-  - [x] Design DB Schemas
-    - [x] Users
-    - [x] Products
-    - [x] Payments
-    - [x] Orders
-  - [ ] Stripe Integration
-
-- Deployment
+- [ ] Tests
+- [ ] Hosting
   - [ ] Frontend
   - [ ] Backend
-  - [ ] Set up CI/CD Pipeline
+- [ ] Set up CI/CD Pipeline
+
+### Frontend
+
+- [ ] Build for Desktop
+- [ ] Make it Responsive
+- [ ] Backend Integration
+
+### Backend
+
+- [ ] Databases
+  - [ ] Setup
+  - [ ] Design Schemas
+  - [ ] Generate Mock Data
+- [ ] Design APIs
+  - [ ] Product Catalog
+  - [ ] Cart
+  - [ ] Checkout
+  - [ ] Orders
+- [ ] User Authentication (JWT)
+  - [ ] Signup/Login
+  - [ ] Reset Password w/ Email
+- [ ] Integrate Stripe
