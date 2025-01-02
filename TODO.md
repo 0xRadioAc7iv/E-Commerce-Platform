@@ -25,5 +25,11 @@
   - [ ] Orders
 - [ ] User Authentication (JWT)
   - [ ] Signup/Login
+    - [ ] Validate Request Data (use express-validator OR zod maybe?)
   - [ ] Reset Password w/ Email
 - [ ] Integrate Stripe
+
+#### Chores
+
+- [ ] Add Import Aliases
+- [ ] Create Query Strings

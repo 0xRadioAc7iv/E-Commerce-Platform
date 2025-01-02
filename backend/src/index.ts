@@ -1,5 +1,6 @@
 import express, { urlencoded } from "express";
 import { configDotenv } from "dotenv";
+import router from "./routes";
 import pool from "./db";
 
 configDotenv();
@@ -12,6 +13,8 @@ app.use(urlencoded({ extended: false }));
 app.get("/", (req, res) => {
   res.send("Basic setup done!");
 });
+
+app.use("/api", router);
 
 async function startServer() {
   try {
