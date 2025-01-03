@@ -15,7 +15,7 @@
 ### Backend
 
 - [ ] Databases
-  - [ ] Setup
+  - [x] Setup
   - [ ] Design Schemas
   - [ ] Generate Mock Data
 - [ ] Design APIs
@@ -24,9 +24,13 @@
   - [ ] Checkout
   - [ ] Orders
 - [ ] User Authentication (JWT)
-  - [ ] Signup/Login
+  - [x] Signup/Login
     - [ ] Validate Request Data (use express-validator OR zod maybe?)
   - [ ] Reset Password w/ Email
+  - [x] Logout
+    - [x] Current Devices
+    - [x] All Devices
+  - [ ] Login with Google
 - [ ] Integrate Stripe
 
 #### Chores

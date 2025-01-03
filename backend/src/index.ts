@@ -1,18 +1,16 @@
 import express, { urlencoded } from "express";
 import { configDotenv } from "dotenv";
 import router from "./routes";
-import pool from "./db";
+import pool from "./utils/db";
+import cookieParser from "cookie-parser";
 
 configDotenv();
 
 const app = express();
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(urlencoded({ extended: false }));
-
-app.get("/", (req, res) => {
-  res.send("Basic setup done!");
-});
 
 app.use("/api", router);
 
