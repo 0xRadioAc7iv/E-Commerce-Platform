@@ -16,12 +16,11 @@
 
 - [ ] Databases
   - [x] Setup
-  - [ ] Design Schemas
+  - [x] Design Schemas
   - [ ] Generate Mock Data
 - [ ] Design APIs
   - [ ] Product Catalog
-  - [ ] Cart
-  - [ ] Checkout
+  - [ ] Cart & Checkout
   - [ ] Orders
 - [ ] User Authentication (JWT)
   - [x] Signup/Login

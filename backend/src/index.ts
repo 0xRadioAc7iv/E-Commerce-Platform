@@ -1,7 +1,7 @@
 import express, { urlencoded } from "express";
 import { configDotenv } from "dotenv";
 import router from "./routes";
-import pool from "./utils/db";
+import { connectDatabase, createTablesIfNotExists } from "./utils/db";
 import cookieParser from "cookie-parser";
 
 configDotenv();
@@ -16,7 +16,8 @@ app.use("/api", router);
 
 async function startServer() {
   try {
-    await pool.connect();
+    await connectDatabase();
+    // await createTablesIfNotExists();
 
     app.listen(3000, () => {
       console.log("Server is running on port 3000");

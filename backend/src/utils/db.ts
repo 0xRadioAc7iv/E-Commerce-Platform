@@ -1,5 +1,6 @@
 import { configDotenv } from "dotenv";
 import { Pool } from "pg";
+import TABLE_QUERIES from "../queries/tables";
 
 configDotenv();
 
@@ -14,5 +15,25 @@ const pool = new Pool({
       ? { rejectUnauthorized: false }
       : false,
 });
+
+export const connectDatabase = async () => {
+  try {
+    await pool.connect();
+  } catch (error: any) {
+    console.log("Error connecting to the database:", error.message);
+  }
+};
+
+export const createTablesIfNotExists = async () => {
+  for (const [key, query] of Object.entries(TABLE_QUERIES)) {
+    console.log(`\nExecuting: ${key}`);
+    try {
+      await pool.query(query);
+      console.log(`Successfully executed: ${key}`);
+    } catch (error: any) {
+      console.error(`Error executing ${key}:`, error.message);
+    }
+  }
+};
 
 export default pool;
