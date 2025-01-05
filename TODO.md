@@ -18,10 +18,12 @@
   - [x] Setup
   - [x] Design Schemas
   - [ ] Generate Mock Data
-- [ ] Design APIs
-  - [ ] Product Catalog
-  - [ ] Cart & Checkout
-  - [ ] Orders
+- [ ] APIs
+  - [x] Design
+  - [ ] Develop
+    - [ ] Product Catalog
+    - [ ] Cart & Checkout
+    - [ ] Orders
 - [ ] User Authentication (JWT)
   - [x] Signup/Login
     - [ ] Validate Request Data (use express-validator OR zod maybe?)
@@ -34,5 +36,9 @@
 
 #### Chores
 
-- [ ] Add Import Aliases
 - [ ] Create Query Strings
+
+#### Fix
+
+- [ ] `/logout` API does not logout the User instantly
+- [ ] `/logout/all` - Internal Server Error

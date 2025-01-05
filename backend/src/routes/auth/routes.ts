@@ -3,39 +3,43 @@ import pool from "../../utils/db";
 import { hashPassword } from "../../utils/password";
 import { compare } from "bcrypt";
 import jwt from "jsonwebtoken";
-import { generateAccessToken, generateRefreshToken } from "../../utils/auth";
+import { generateJsonWebToken } from "../../utils/auth";
 import { AuthenticatedRequest } from "../../types/auth";
 import { authMiddleware } from "../../middlewares/auth";
 
 const router = Router();
 
 router.post("/signup", async (request, response) => {
-  const {
-    body: { email, password },
-  } = request;
+  const { email, username, password } = request.body;
 
-  if (!email || !password) {
-    response.status(400).json({ message: "Email and password are required" });
+  if (!email || !username || !password) {
+    response
+      .status(400)
+      .json({ message: "Email, Username and password are required" });
     return;
   }
 
   try {
     const queryResult = await pool.query(
-      `SELECT email FROM users WHERE email = $1`,
-      [email]
+      `SELECT username, email FROM users WHERE username = $1 OR email = $2`,
+      [username, email]
     );
 
     if (queryResult.rows.length > 0) {
-      response.status(409).json({ message: "Email is already in use!" });
+      const existingUser = queryResult.rows[0];
+      if (existingUser.email === email) {
+        response.status(409).json({ message: "Email is already in use!" });
+      } else if (existingUser.username === username) {
+        response.status(409).json({ message: "Username is already taken!" });
+      }
       return;
     }
 
     const hashedPassword = await hashPassword(password);
-
-    await pool.query(`INSERT INTO users (email, password) VALUES ($1, $2)`, [
-      email,
-      hashedPassword,
-    ]);
+    await pool.query(
+      `INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
+      [username, email, hashedPassword]
+    );
 
     response.sendStatus(201);
   } catch (error) {
@@ -44,21 +48,26 @@ router.post("/signup", async (request, response) => {
 });
 
 router.post("/signin", async (request, response) => {
-  const { email, password } = request.body;
+  const { email, username, password } = request.body;
 
-  if (!email || !password) {
-    response.status(400).json({ message: "Email and password are required" });
+  if (!email && !username) {
+    response.status(400).json({ message: "Email/Username is required" });
+    return;
+  }
+
+  if (!password) {
+    response.status(400).json({ message: "Password is required" });
     return;
   }
 
   try {
     const queryResult = await pool.query(
-      `SELECT user_id, email, password FROM users WHERE email = $1`,
-      [email]
+      `SELECT user_id, username, email, password FROM users WHERE username = $1 OR email = $2`,
+      [username || null, email || null]
     );
 
     if (queryResult.rows.length == 0) {
-      response.status(401).json({ message: "Email not registered" });
+      response.status(401).json({ message: "Invalid Email/Username" });
       return;
     }
 
@@ -66,16 +75,19 @@ router.post("/signin", async (request, response) => {
     const isPasswordMatch = await compare(password, user.password);
 
     if (!isPasswordMatch) {
-      response.status(401).json({ message: "Invalid Email or Password" });
+      response.status(401).json({ message: "Invalid Password" });
       return;
     }
 
     const payload = { id: user.user_id, email: user.email };
-    const accessToken = generateAccessToken(payload);
-    const refreshToken = generateRefreshToken(payload);
+    const accessToken = generateJsonWebToken({ user: payload, isAccess: true });
+    const refreshToken = generateJsonWebToken({
+      user: payload,
+      isAccess: false,
+    });
 
     await pool.query(
-      `INSERT INTO refresh_tokens (user_id, tokens) VALUES ($1, $2)`,
+      `INSERT INTO refresh_tokens (user_id, token) VALUES ($1, $2)`,
       [user.user_id, refreshToken]
     );
 
@@ -99,16 +111,16 @@ router.post("/signin", async (request, response) => {
 });
 
 router.post("/token", async (request, response) => {
-  const { refreshToken } = request.cookies;
+  const refreshToken = request.cookies["refresh"];
 
   if (!refreshToken) {
-    response.status(400).json({ message: "Refresh token required" });
+    response.status(400).json({ message: "Refresh token is required" });
     return;
   }
 
   try {
     const queryResult = await pool.query(
-      `SELECT user_id FROM refresh_tokens WHERE tokens = $1`,
+      `SELECT user_id FROM refresh_tokens WHERE token = $1`,
       [refreshToken]
     );
 
@@ -132,7 +144,14 @@ router.post("/token", async (request, response) => {
           { expiresIn: "15m" }
         );
 
-        response.status(200).json({ accessToken: newAccessToken });
+        response
+          .cookie("access", newAccessToken, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "strict",
+            maxAge: 15 * 60 * 1000,
+          })
+          .sendStatus(200);
       }
     );
   } catch (error) {
@@ -144,12 +163,12 @@ router.post("/logout", authMiddleware, async (request, response) => {
   const refreshToken = request.cookies["refresh"];
 
   if (!refreshToken) {
-    response.status(400).json({ message: "Refresh token required" });
+    response.status(400).json({ message: "Refresh token is required" });
     return;
   }
 
   try {
-    await pool.query(`DELETE FROM refresh_tokens WHERE tokens = $1`, [
+    await pool.query(`DELETE FROM refresh_tokens WHERE token = $1`, [
       refreshToken,
     ]);
     response.sendStatus(204);
@@ -163,6 +182,8 @@ router.post(
   authMiddleware,
   async (request: AuthenticatedRequest, response) => {
     const user = request.user;
+
+    console.log(user);
 
     if (!user) {
       response.status(400).json({ message: "User ID required" });

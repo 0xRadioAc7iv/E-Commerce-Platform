@@ -7,10 +7,6 @@ export const authMiddleware = (
   response: Response,
   next: NextFunction
 ) => {
-  if (request.originalUrl.includes("/logout")) {
-    return next();
-  }
-
   const accessToken = request.cookies["access"];
 
   if (!accessToken) {

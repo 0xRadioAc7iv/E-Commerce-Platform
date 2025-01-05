@@ -24,7 +24,9 @@ export const connectDatabase = async () => {
   }
 };
 
-export const createTablesIfNotExists = async () => {
+export const createTablesIfNotExists = async (createTables = false) => {
+  if (!createTables) return;
+
   for (const [key, query] of Object.entries(TABLE_QUERIES)) {
     console.log(`\nExecuting: ${key}`);
     try {
