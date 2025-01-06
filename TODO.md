@@ -21,7 +21,12 @@
 - [ ] APIs
   - [x] Design
   - [ ] Develop
-    - [ ] Product Catalog
+    - [x] Product Catalog
+      - [x] All Products
+      - [x] Get by ID
+      - [x] Search (based on name & description)
+      - [x] Filter by Price
+      - [x] Filter by Category
     - [ ] Cart & Checkout
     - [ ] Orders
 - [ ] User Authentication (JWT)
@@ -29,7 +34,7 @@
     - [ ] Validate Request Data (use express-validator OR zod maybe?)
   - [ ] Reset Password w/ Email
   - [x] Logout
-    - [x] Current Devices
+    - [x] Current Device
     - [x] All Devices
   - [ ] Login with Google
 - [ ] Integrate Stripe

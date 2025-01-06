@@ -1,6 +1,7 @@
 import { configDotenv } from "dotenv";
 import { Pool } from "pg";
 import TABLE_QUERIES from "../queries/tables";
+import PRODUCT_QUERIES from "../queries/products";
 
 configDotenv();
 
@@ -36,6 +37,36 @@ export const createTablesIfNotExists = async (createTables = false) => {
       console.error(`Error executing ${key}:`, error.message);
     }
   }
+};
+
+export const buildFilterQuery = (
+  category: string,
+  priceLow: string,
+  priceHigh: string,
+  search: string
+) => {
+  const conditions = [];
+  let baseQuery = PRODUCT_QUERIES.GET_ALL_PRODUCTS;
+
+  if (category) {
+    conditions.push(`category = '${category}'`);
+  }
+  if (priceLow) {
+    conditions.push(`price >= ${priceLow}`);
+  }
+  if (priceHigh) {
+    conditions.push(`price <= ${priceHigh}`);
+  }
+  if (search) {
+    conditions.push(
+      `name LIKE '%${search}%' OR description LIKE '%${search}%'`
+    );
+  }
+  if (conditions.length > 0) {
+    baseQuery += " WHERE " + conditions.join(" AND ");
+  }
+
+  return baseQuery;
 };
 
 export default pool;
