@@ -14,7 +14,7 @@
 
 ### Backend
 
-- [ ] Databases
+- [x] Databases
   - [x] Setup
   - [x] Design Schemas
   - [x] Generate Mock Data
@@ -27,23 +27,24 @@
       - [x] Search (based on name & description)
       - [x] Filter by Price
       - [x] Filter by Category
-    - [ ] Cart & Checkout
+    - [x] Wishlist
+    - [ ] Cart
+    - [ ] Payments (Stripe Integration)
     - [ ] Orders
 - [ ] User Authentication (JWT)
   - [x] Signup/Login
-    - [ ] Validate Request Data (use express-validator OR zod maybe?)
+    - [x] Validate Request Data
   - [ ] Reset Password w/ Email
   - [x] Logout
     - [x] Current Device
     - [x] All Devices
   - [ ] Login with Google
-- [ ] Integrate Stripe
 
 #### Chores
 
-- [ ] Create Query Strings
+- [x] Create Query Strings
 
 #### Fix
 
-- [ ] `/logout` API does not logout the User instantly
-- [ ] `/logout/all` - Internal Server Error
+- [x] `/logout` API does not logout the User instantly
+- [x] `/logout/all` - Internal Server Error

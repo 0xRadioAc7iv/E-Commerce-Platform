@@ -4,7 +4,20 @@ import { hashPassword } from "../utils/password";
 import { compare } from "bcrypt";
 import { generateJsonWebToken } from "../utils/auth";
 import jwt from "jsonwebtoken";
-import { AuthenticatedRequest } from "../types/auth";
+import { AuthenticatedRequest, AuthenticatedUserJWT } from "../types/auth";
+import validator from "validator";
+import { USER_QUERIES, TOKEN_QUERIES } from "../queries/auth";
+
+const {
+  GET_USERS_BY_USERNAME_OR_EMAIL,
+  GET_USER_BY_USERNAME_OR_EMAIL,
+  GET_USER_EMAIL,
+  CREATE_NEW_USER,
+  DELETE_REFRESH_TOKEN,
+  DELETE_ALL_REFRESH_TOKENS,
+} = USER_QUERIES;
+
+const { CREATE_NEW_REFRESH_TOKEN, GET_USER_BY_REFRESH_TOKEN } = TOKEN_QUERIES;
 
 export const signupController: RequestHandler = async (request, response) => {
   const { email, username, password } = request.body;
@@ -16,11 +29,31 @@ export const signupController: RequestHandler = async (request, response) => {
     return;
   }
 
+  if (!validator.isEmail(email)) {
+    response.status(400).json({ message: "Invalid email format." });
+    return;
+  }
+
+  if (!/^[a-zA-Z0-9_]{3,26}$/.test(username)) {
+    response.status(400).json({
+      message:
+        "Username must be 3-26 characters long and contain only letters, numbers, and underscores.",
+    });
+    return;
+  }
+
+  if (password.length < 8) {
+    response
+      .status(400)
+      .json({ message: "Password must be of at least 8 characters." });
+    return;
+  }
+
   try {
-    const queryResult = await pool.query(
-      `SELECT username, email FROM users WHERE username = $1 OR email = $2`,
-      [username, email]
-    );
+    const queryResult = await pool.query(GET_USERS_BY_USERNAME_OR_EMAIL, [
+      username,
+      email,
+    ]);
 
     if (queryResult.rows.length > 0) {
       const existingUser = queryResult.rows[0];
@@ -33,11 +66,7 @@ export const signupController: RequestHandler = async (request, response) => {
     }
 
     const hashedPassword = await hashPassword(password);
-    await pool.query(
-      `INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
-      [username, email, hashedPassword]
-    );
-
+    await pool.query(CREATE_NEW_USER, [username, email, hashedPassword]);
     response.sendStatus(201);
   } catch (error) {
     response.sendStatus(500);
@@ -58,10 +87,10 @@ export const signinController: RequestHandler = async (request, response) => {
   }
 
   try {
-    const queryResult = await pool.query(
-      `SELECT user_id, username, email, password FROM users WHERE username = $1 OR email = $2`,
-      [username || null, email || null]
-    );
+    const queryResult = await pool.query(GET_USER_BY_USERNAME_OR_EMAIL, [
+      username || null,
+      email || null,
+    ]);
 
     if (queryResult.rows.length == 0) {
       response.status(401).json({ message: "Invalid Email/Username" });
@@ -83,10 +112,7 @@ export const signinController: RequestHandler = async (request, response) => {
       isAccess: false,
     });
 
-    await pool.query(
-      `INSERT INTO refresh_tokens (user_id, token) VALUES ($1, $2)`,
-      [user.user_id, refreshToken]
-    );
+    await pool.query(CREATE_NEW_REFRESH_TOKEN, [user.user_id, refreshToken]);
 
     response
       .cookie("access", accessToken, {
@@ -119,10 +145,9 @@ export const refreshAccessTokenController: RequestHandler = async (
   }
 
   try {
-    const queryResult = await pool.query(
-      `SELECT user_id FROM refresh_tokens WHERE token = $1`,
-      [refreshToken]
-    );
+    const queryResult = await pool.query(GET_USER_BY_REFRESH_TOKEN, [
+      refreshToken,
+    ]);
 
     if (queryResult.rows.length === 0) {
       response.status(403).json({ message: "Invalid refresh token" });
@@ -168,10 +193,8 @@ export const logoutController: RequestHandler = async (request, response) => {
   }
 
   try {
-    await pool.query(`DELETE FROM refresh_tokens WHERE token = $1`, [
-      refreshToken,
-    ]);
-    response.sendStatus(204);
+    await pool.query(DELETE_REFRESH_TOKEN, [refreshToken]);
+    response.clearCookie("access").clearCookie("refresh").sendStatus(204);
   } catch (error) {
     response.sendStatus(500);
   }
@@ -181,17 +204,27 @@ export const logoutAllController: RequestHandler = async (
   request: AuthenticatedRequest,
   response
 ) => {
-  const user = request.user;
+  const { id } = request.user as AuthenticatedUserJWT;
 
-  if (!user) {
+  if (!id) {
     response.status(400).json({ message: "User ID required" });
     return;
   }
 
   try {
-    await pool.query(`DELETE FROM refresh_tokens WHERE user_id = $1`, [user]);
-    response.sendStatus(204);
+    await pool.query(DELETE_ALL_REFRESH_TOKENS, [id]);
+    response.clearCookie("access").clearCookie("refresh").sendStatus(204);
   } catch (error) {
     response.sendStatus(500);
   }
 };
+
+export const requestPasswordResetController: RequestHandler = async (
+  request,
+  response
+) => {};
+
+export const resetPasswordController: RequestHandler = async (
+  request,
+  response
+) => {};

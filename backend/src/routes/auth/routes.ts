@@ -4,6 +4,8 @@ import {
   logoutAllController,
   logoutController,
   refreshAccessTokenController,
+  requestPasswordResetController,
+  resetPasswordController,
   signinController,
   signupController,
 } from "../../controllers/auth";
@@ -19,5 +21,9 @@ router.post("/token", refreshAccessTokenController);
 router.post("/logout", authMiddleware, logoutController);
 
 router.post("/logout/all", authMiddleware, logoutAllController);
+
+router.post("/password/request-reset", requestPasswordResetController);
+
+router.post("/password/reset", resetPasswordController);
 
 export default router;

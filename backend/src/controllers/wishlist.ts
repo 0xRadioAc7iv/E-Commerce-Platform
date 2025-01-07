@@ -34,6 +34,11 @@ export const addProductToWishlist: RequestHandler = async (
   const { id } = request.user as AuthenticatedUserJWT;
   const { productId } = request.body;
 
+  if (!productId) {
+    response.status(400).send({ error: "Product ID is required!" });
+    return;
+  }
+
   try {
     await pool.query(ADD_PRODUCT_TO_WISHLIST, [id, productId]);
     response.sendStatus(201);
@@ -49,6 +54,11 @@ export const deleteProductFromWishlist: RequestHandler = async (
 ) => {
   const { id } = request.user as AuthenticatedUserJWT;
   const { productId } = request.body;
+
+  if (!productId) {
+    response.status(400).send({ error: "Product ID is required!" });
+    return;
+  }
 
   try {
     const queryResult = await pool.query(GET_WISHLIST_PRODUCT_BY_ID, [
