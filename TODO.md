@@ -17,7 +17,7 @@
 - [ ] Databases
   - [x] Setup
   - [x] Design Schemas
-  - [ ] Generate Mock Data
+  - [x] Generate Mock Data
 - [ ] APIs
   - [x] Design
   - [ ] Develop

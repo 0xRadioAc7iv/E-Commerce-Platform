@@ -9,3 +9,10 @@ export type genJWTArgs = {
 export interface AuthenticatedRequest extends Request {
   user?: string | JwtPayload;
 }
+
+export type AuthenticatedUserJWT = {
+  id: string;
+  email: string;
+  iat: number;
+  exp: number;
+};

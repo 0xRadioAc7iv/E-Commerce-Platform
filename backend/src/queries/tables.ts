@@ -26,13 +26,14 @@ const TABLE_QUERIES = {
             );`,
   CREATE_TABLE_IF_NOT_EXISTS_WISHLIST: `
           CREATE TABLE IF NOT EXISTS wishlist (
-              wishlist_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-              user_id UUID NOT NULL,
-              product_id UUID NOT NULL,
-              added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-              FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-              FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
-          );`,
+                wishlist_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+                user_id UUID NOT NULL,
+                product_id UUID NOT NULL,
+                added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+                FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+                CONSTRAINT unique_user_product UNIQUE (user_id, product_id)
+            );`,
   CREATE_TABLE_IF_NOT_EXISTS_ORDERS: `
           CREATE TABLE IF NOT EXISTS orders (
               order_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
