@@ -28,9 +28,8 @@
       - [x] Filter by Price
       - [x] Filter by Category
     - [x] Wishlist
-    - [ ] Cart
+    - [x] Cart
     - [ ] Payments (Stripe Integration)
-    - [ ] Orders
 - [ ] User Authentication (JWT)
   - [x] Signup/Login
     - [x] Validate Request Data
@@ -38,7 +37,6 @@
   - [x] Logout
     - [x] Current Device
     - [x] All Devices
-  - [ ] Login with Google
 
 #### Chores
 

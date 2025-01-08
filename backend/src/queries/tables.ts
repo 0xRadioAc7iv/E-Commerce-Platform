@@ -22,7 +22,8 @@ const TABLE_QUERIES = {
                 quantity INT DEFAULT 1 CHECK (quantity > 0),
                 added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-                FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE
+                FOREIGN KEY (product_id) REFERENCES products(product_id) ON DELETE CASCADE,
+                CONSTRAINT unique_user_product_cart UNIQUE (user_id, product_id)
             );`,
   CREATE_TABLE_IF_NOT_EXISTS_WISHLIST: `
           CREATE TABLE IF NOT EXISTS wishlist (

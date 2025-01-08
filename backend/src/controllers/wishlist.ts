@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
 import { AuthenticatedRequest, AuthenticatedUserJWT } from "../types/auth";
 import pool from "../utils/db";
-import WISHLIST_QUERIES from "../queries/user";
+import { WISHLIST_QUERIES } from "../queries/user";
 
 const {
   GET_ALL_WISHLIST_PRODUCTS,
@@ -21,7 +21,7 @@ export const getAllWishlistedProducts: RequestHandler = async (
     const data = queryResult.rows;
 
     if (data.length == 0) response.sendStatus(404);
-    else response.status(200).json(data);
+    else response.status(200).json({ products: data, length: data.length });
   } catch (error) {
     response.sendStatus(500);
   }
@@ -73,7 +73,7 @@ export const deleteProductFromWishlist: RequestHandler = async (
     }
 
     await pool.query(DELETE_PRODUCT_FROM_WISHLIST, [id, productId]);
-    response.sendStatus(200);
+    response.sendStatus(204);
   } catch (error) {
     response.sendStatus(500);
   }
