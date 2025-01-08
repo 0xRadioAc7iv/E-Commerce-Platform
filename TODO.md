@@ -30,10 +30,10 @@
     - [x] Wishlist
     - [x] Cart
     - [ ] Payments (Stripe Integration)
-- [ ] User Authentication (JWT)
+- [x] User Authentication (JWT)
   - [x] Signup/Login
     - [x] Validate Request Data
-  - [ ] Reset Password w/ Email
+  - [x] Reset Password w/ Email
   - [x] Logout
     - [x] Current Device
     - [x] All Devices

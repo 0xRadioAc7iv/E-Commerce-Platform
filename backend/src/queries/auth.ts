@@ -12,4 +12,12 @@ const TOKEN_QUERIES = {
   GET_USER_BY_REFRESH_TOKEN: `SELECT user_id FROM refresh_tokens WHERE token = $1`,
 };
 
-export { USER_QUERIES, TOKEN_QUERIES };
+const PASSWORD_RESET_QUERIES = {
+  SET_PASSWORD_RESET_OTP:
+    "UPDATE users SET otp = $2, otp_expiry = $3 WHERE email = $1;",
+  GET_PASSWORD_RESET_OTP: "SELECT otp, otp_expiry FROM users WHERE email = $1;",
+  RESET_PASSWORD_AND_CLEAR_OTP:
+    "UPDATE users SET password = $1, otp = NULL, otp_expiry = NULL WHERE email = $2;",
+};
+
+export { USER_QUERIES, TOKEN_QUERIES, PASSWORD_RESET_QUERIES };

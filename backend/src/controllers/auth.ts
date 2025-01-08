@@ -6,7 +6,12 @@ import { generateJsonWebToken } from "../utils/auth";
 import jwt from "jsonwebtoken";
 import { AuthenticatedRequest, AuthenticatedUserJWT } from "../types/auth";
 import validator from "validator";
-import { USER_QUERIES, TOKEN_QUERIES } from "../queries/auth";
+import {
+  USER_QUERIES,
+  TOKEN_QUERIES,
+  PASSWORD_RESET_QUERIES,
+} from "../queries/auth";
+import { sendEmail } from "../utils/mail";
 
 const {
   GET_USERS_BY_USERNAME_OR_EMAIL,
@@ -18,6 +23,12 @@ const {
 } = USER_QUERIES;
 
 const { CREATE_NEW_REFRESH_TOKEN, GET_USER_BY_REFRESH_TOKEN } = TOKEN_QUERIES;
+
+const {
+  SET_PASSWORD_RESET_OTP,
+  GET_PASSWORD_RESET_OTP,
+  RESET_PASSWORD_AND_CLEAR_OTP,
+} = PASSWORD_RESET_QUERIES;
 
 export const signupController: RequestHandler = async (request, response) => {
   const { email, username, password } = request.body;
@@ -222,9 +233,87 @@ export const logoutAllController: RequestHandler = async (
 export const requestPasswordResetController: RequestHandler = async (
   request,
   response
-) => {};
+) => {
+  const { email } = request.body;
+
+  if (!email) {
+    response.status(400).json({ message: "Email is required." });
+    return;
+  }
+
+  try {
+    const queryResult = await pool.query(GET_USER_EMAIL, [email]);
+
+    if (queryResult.rows.length === 0) {
+      response
+        .status(200)
+        .json({ message: "If the email exists, an OTP will be sent." });
+      return;
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const hashedOtp = await hashPassword(otp);
+    const expiration = new Date(Date.now() + 10 * 60 * 1000);
+
+    await pool.query(SET_PASSWORD_RESET_OTP, [email, hashedOtp, expiration]);
+    await sendEmail(email, "Password Reset OTP", `Your OTP is: ${otp}`);
+
+    response
+      .status(200)
+      .json({ message: "If the email exists, an OTP will be sent." });
+  } catch (error) {
+    response.status(500).json({ message: "Internal server error." });
+  }
+};
 
 export const resetPasswordController: RequestHandler = async (
   request,
   response
-) => {};
+) => {
+  const { email, otp, newPassword } = request.body;
+
+  if (!email || !otp || !newPassword) {
+    response
+      .status(400)
+      .json({ message: "Email, OTP, and new password are required." });
+    return;
+  }
+
+  if (newPassword.length < 8) {
+    response
+      .status(400)
+      .json({ message: "Password must be at least 8 characters long." });
+    return;
+  }
+
+  try {
+    const queryResult = await pool.query(GET_PASSWORD_RESET_OTP, [email]);
+
+    if (queryResult.rows.length === 0) {
+      response.status(400).json({ message: "Invalid or expired OTP." });
+      return;
+    }
+
+    const data = queryResult.rows[0];
+    const isOtpValid = await compare(otp, data.otp);
+
+    if (!isOtpValid || new Date(data.otp_expiry) < new Date()) {
+      response.status(400).json({ message: "Invalid or expired OTP." });
+      return;
+    }
+
+    const hashedPassword = await hashPassword(newPassword);
+    await pool.query(RESET_PASSWORD_AND_CLEAR_OTP, [hashedPassword, email]);
+    await sendEmail(
+      email,
+      "Password Reset Successful",
+      "Your Password is reset successfully."
+    );
+
+    response
+      .status(200)
+      .json({ message: "Password has been reset successfully." });
+  } catch (error) {
+    response.status(500).json({ message: "Internal server error." });
+  }
+};
