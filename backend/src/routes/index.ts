@@ -11,6 +11,7 @@ router.use("/auth", authRouter);
 
 router.use("/products", productsRouter);
 
+// authMiddleware will be used for all of the below routes (protected routes)
 router.use(authMiddleware);
 
 router.use("/wishlist", wishlistRouter);
