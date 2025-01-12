@@ -4,6 +4,7 @@ import { authMiddleware } from "../middlewares/auth";
 import productsRouter from "./products/routes";
 import wishlistRouter from "./wishlist/routes";
 import cartRouter from "./cart/routes";
+import paymentRouter from "./payments/routes";
 
 const router = Router();
 
@@ -17,5 +18,7 @@ router.use(authMiddleware);
 router.use("/wishlist", wishlistRouter);
 
 router.use("/cart", cartRouter);
+
+router.use("/payments", paymentRouter);
 
 export default router;

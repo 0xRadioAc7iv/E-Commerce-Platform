@@ -10,4 +10,4 @@
 
 ### Backend
 
-- [ ] Payments API (Integrate PayTM)
+- [ ] Payments API (Integrate Stripe)
