@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import { AuthenticatedRequest, AuthenticatedUserJWT } from "../types/auth";
-import pool from "../utils/db";
-import { WISHLIST_QUERIES } from "../queries/user";
+import { AuthenticatedRequest, AuthenticatedUserJWT } from "../../types/auth";
+import pool from "../../utils/db";
+import { WISHLIST_QUERIES } from "../../queries/user";
 
 const {
   GET_ALL_WISHLIST_PRODUCTS,

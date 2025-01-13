@@ -1,6 +1,6 @@
 import { RequestHandler } from "express";
-import pool, { buildFilterQuery } from "../utils/db";
-import PRODUCT_QUERIES from "../queries/products";
+import pool, { buildFilterQuery } from "../../utils/db";
+import PRODUCT_QUERIES from "../../queries/products";
 
 const { GET_PRODUCT_BY_ID } = PRODUCT_QUERIES;
 

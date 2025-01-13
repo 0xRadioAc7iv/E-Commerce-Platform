@@ -1,5 +1,12 @@
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import Success from "./pages/success";
+
 function App() {
-  return <div>E-Commerce Platform</div>;
+  <Router>
+    <Routes>
+      <Route path="/success" element={<Success />} />
+    </Routes>
+  </Router>;
 }
 
 export default App;

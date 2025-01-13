@@ -1,7 +1,7 @@
 import { RequestHandler } from "express";
-import { CART_QUERIES } from "../queries/user";
-import { AuthenticatedRequest, AuthenticatedUserJWT } from "../types/auth";
-import pool from "../utils/db";
+import { CART_QUERIES } from "../../queries/user";
+import { AuthenticatedRequest, AuthenticatedUserJWT } from "../../types/auth";
+import pool from "../../utils/db";
 
 const {
   GET_ALL_CART_PRODUCTS,

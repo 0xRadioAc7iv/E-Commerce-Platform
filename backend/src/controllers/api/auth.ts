@@ -1,17 +1,17 @@
 import { RequestHandler } from "express";
-import pool from "../utils/db";
-import { hashPassword } from "../utils/password";
+import pool from "../../utils/db";
+import { hashPassword } from "../../utils/password";
 import { compare } from "bcrypt";
-import { generateJsonWebToken } from "../utils/auth";
+import { generateJsonWebToken } from "../../utils/auth";
 import jwt from "jsonwebtoken";
-import { AuthenticatedRequest, AuthenticatedUserJWT } from "../types/auth";
+import { AuthenticatedRequest, AuthenticatedUserJWT } from "../../types/auth";
 import validator from "validator";
 import {
   USER_QUERIES,
   TOKEN_QUERIES,
   PASSWORD_RESET_QUERIES,
-} from "../queries/auth";
-import { sendEmail } from "../utils/mail";
+} from "../../queries/auth";
+import { sendEmail } from "../../utils/mail";
 
 const {
   GET_USERS_BY_USERNAME_OR_EMAIL,

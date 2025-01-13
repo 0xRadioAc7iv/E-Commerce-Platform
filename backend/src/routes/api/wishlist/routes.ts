@@ -3,7 +3,7 @@ import {
   addProductToWishlist,
   deleteProductFromWishlist,
   getAllWishlistedProducts,
-} from "../../controllers/wishlist";
+} from "../../../controllers/api/wishlist";
 
 const router = Router();
 
