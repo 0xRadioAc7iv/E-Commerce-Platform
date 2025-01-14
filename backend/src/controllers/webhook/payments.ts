@@ -3,6 +3,7 @@ import { stripe } from "../../utils/payments";
 import pool from "../../utils/db";
 import { StripeCheckoutData } from "../../types/payments";
 import PAYMENT_QUERIES from "../../queries/payments";
+import { sendEmail } from "../../utils/mail";
 
 const { CREATE_AND_RETURN_ORDER_ID, CREATE_ORDER_PAYMENT } = PAYMENT_QUERIES;
 
@@ -25,6 +26,7 @@ export const stripeWebhookController: RequestHandler = async (
 
         const paymentId = session.payment_intent;
         const userId = session.metadata?.userId;
+        const userEmail = session.customer_details?.email as string;
         const amountTotal = (session.amount_total as number) / 100;
         const orderItems = JSON.parse(
           session.metadata?.orderItems as string
@@ -61,6 +63,12 @@ export const stripeWebhookController: RequestHandler = async (
           paymentId,
           amountTotal,
         ]);
+
+        await sendEmail(
+          userEmail,
+          "Your Order & Stripe Payment Confirmed!",
+          `We have received your Order and your Payment is Confirmed.`
+        );
 
         break;
     }

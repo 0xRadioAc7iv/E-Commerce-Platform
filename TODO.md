@@ -1,13 +1,9 @@
-## MVP
+### Tasks
 
 - [ ] Complete UI
 - [ ] Integrate Backend
 - [ ] Tests
-- [ ] Hosting
+- [ ] Deploy
   - [ ] Frontend
   - [ ] Backend
 - [ ] Set up CI/CD Pipeline
-
-### Backend
-
-- [x] Payments API (Integrate Stripe)

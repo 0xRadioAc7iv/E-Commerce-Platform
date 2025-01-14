@@ -51,7 +51,6 @@ export const addItemToCartController: RequestHandler = async (
     await pool.query(ADD_PRODUCT_TO_CART, [id, productId, productQuantity]);
     response.sendStatus(201);
   } catch (error) {
-    console.log(error);
     response.sendStatus(500);
   }
 };
