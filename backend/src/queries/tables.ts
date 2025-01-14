@@ -5,7 +5,8 @@ const TABLE_QUERIES = {
             username VARCHAR(26) NOT NULL UNIQUE,
             email VARCHAR(100) NOT NULL UNIQUE,
             password TEXT NOT NULL,
-            stripe_customer_id TEXT UNIQUE
+            otp TEXT,
+            otp_expiry TIMESTAMP
         );`,
   CREATE_TABLE_IF_NOT_EXISTS_REFRESH_TOKENS: `
           CREATE TABLE IF NOT EXISTS refresh_tokens (
@@ -40,8 +41,8 @@ const TABLE_QUERIES = {
               order_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
               user_id UUID NOT NULL,
               total_amount DECIMAL(10, 2) NOT NULL CHECK (total_amount >= 0),
-              status VARCHAR(20) DEFAULT 'Pending',
-              payment_status VARCHAR(20) DEFAULT 'Pending',
+              status VARCHAR(20) DEFAULT 'Delivered',
+              payment_status VARCHAR(20) DEFAULT 'Paid',
               created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
               FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
           );`,
@@ -62,8 +63,8 @@ const TABLE_QUERIES = {
               order_id UUID NOT NULL,
               stripe_payment_id TEXT NOT NULL,
               amount DECIMAL(10, 2) NOT NULL CHECK (amount >= 0),
-              currency VARCHAR(3) DEFAULT 'INR',
-              status VARCHAR(20) DEFAULT 'Pending',
+              currency VARCHAR(3) DEFAULT 'USD',
+              status VARCHAR(20) DEFAULT 'Completed',
               FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
               FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE
           );`,

@@ -1,7 +1,10 @@
 import { RequestHandler } from "express";
-import Stripe from "stripe";
+import { stripe } from "../../utils/payments";
+import pool from "../../utils/db";
+import { StripeCheckoutData } from "../../types/payments";
+import PAYMENT_QUERIES from "../../queries/payments";
 
-const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY as string);
+const { CREATE_AND_RETURN_ORDER_ID, CREATE_ORDER_PAYMENT } = PAYMENT_QUERIES;
 
 export const stripeWebhookController: RequestHandler = async (
   request,
@@ -18,17 +21,52 @@ export const stripeWebhookController: RequestHandler = async (
 
     switch (event.type) {
       case "checkout.session.completed":
-        console.log("Payment successful:", event.data.object);
-        // TODO: Create Order & Payment
-        break;
-      case "payment_intent.payment_failed":
-        console.log("Payment failed:", event.data.object);
+        const session = event.data.object;
+
+        const paymentId = session.payment_intent;
+        const userId = session.metadata?.userId;
+        const amountTotal = (session.amount_total as number) / 100;
+        const orderItems = JSON.parse(
+          session.metadata?.orderItems as string
+        ) as StripeCheckoutData[];
+
+        const { rows } = await pool.query(CREATE_AND_RETURN_ORDER_ID, [
+          userId,
+          amountTotal,
+        ]);
+        const orderId = rows[0].order_id;
+
+        const ORDER_ITEMS_INSERTION_QUERY = `
+          INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ${orderItems
+            .map(
+              (_: any, i: number) =>
+                `('${orderId}', $${i * 3 + 1}, $${i * 3 + 2}, $${i * 3 + 3})`
+            )
+            .join(", ")};
+          `.trim();
+
+        const values = orderItems.flatMap((item) => [
+          item.price_data.product_data.metadata.id,
+          item.quantity,
+          item.price_data.unit_amount / 100,
+        ]);
+
+        // Inserts Order Items
+        await pool.query(ORDER_ITEMS_INSERTION_QUERY, values);
+
+        // Inserts Payment
+        await pool.query(CREATE_ORDER_PAYMENT, [
+          userId,
+          orderId,
+          paymentId,
+          amountTotal,
+        ]);
+
         break;
     }
 
-    response.status(200).send("Webhook received!");
+    response.status(200);
   } catch (err) {
-    console.error("Webhook error:", err);
-    response.status(400).send("Webhook error!");
+    response.status(400);
   }
 };

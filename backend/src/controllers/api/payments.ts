@@ -1,15 +1,21 @@
 import { RequestHandler } from "express";
-import Stripe from "stripe";
+import { stripe } from "../../utils/payments";
 import { ProductData } from "../../types/payments";
 import { buildLineItemsArray } from "../../utils/payments";
-
-const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY as string);
+import { AuthenticatedRequest, AuthenticatedUserJWT } from "../../types/auth";
 
 export const generatePaymentLink: RequestHandler = async (
-  request,
+  request: AuthenticatedRequest,
   response
 ) => {
   const { products }: ProductData = request.body;
+  const { id } = request.user as AuthenticatedUserJWT;
+  const cancelUrl = request.headers.referer;
+
+  if (!id) {
+    response.sendStatus(401);
+    return;
+  }
 
   if (!products) {
     response.status(400).send({ error: "No Products given" });
@@ -23,13 +29,17 @@ export const generatePaymentLink: RequestHandler = async (
       payment_method_types: ["card"],
       mode: "payment",
       line_items: lineItems,
-      success_url:
-        "http://localhost:5173/success?session_id={CHECKOUT_SESSION_ID}",
-      cancel_url: "http://localhost:5173/cancel",
+      metadata: {
+        userId: id,
+        orderItems: JSON.stringify(lineItems),
+      },
+      success_url: `${process.env.FRONTEND_ORIGIN_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: cancelUrl,
     });
 
     response.status(201).send({ paymentLink: session.url });
   } catch (error) {
+    console.log(error);
     response.sendStatus(500);
   }
 };
