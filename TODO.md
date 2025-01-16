@@ -1,13 +1,28 @@
-### Tasks
+## Tasks
 
-- [ ] Complete UI
-- [ ] Integrate Backend
 - [ ] Tests
 - [ ] Deploy
   - [ ] Frontend
   - [ ] Backend
 - [ ] Set up CI/CD Pipeline
 
+### Frontend
+
+- [ ] Logout Buttons
+- [ ] Signup/Signin Flow
+- [ ] Pages
+  - [ ] Search Results Page
+  - [ ] All Products Page
+
+### Backend
+
+- [ ] API
+  - [ ] Edit User Info
+  - [ ] Add Rate Limits for Password Reset
+- [ ] Products
+  - [ ] Add Images & Store in Cloudinary
+  - [ ] Cache Data
+
 ### Fix
 
-- [ ] Routing
+- [ ] Frontend Routing

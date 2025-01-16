@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "../../../middlewares/auth";
 import {
+  deleteAccountController,
   logoutAllController,
   logoutController,
   refreshAccessTokenController,
@@ -26,6 +27,6 @@ router.post("/password/request-reset", requestPasswordResetController);
 
 router.post("/password/reset", resetPasswordController);
 
-router.delete("/account", authMiddleware);
+router.delete("/account", authMiddleware, deleteAccountController);
 
 export default router;
