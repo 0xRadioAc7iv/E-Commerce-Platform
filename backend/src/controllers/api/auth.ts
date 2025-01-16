@@ -20,6 +20,7 @@ const {
   CREATE_NEW_USER,
   DELETE_REFRESH_TOKEN,
   DELETE_ALL_REFRESH_TOKENS,
+  DELETE_USER_ACCOUNT,
 } = USER_QUERIES;
 
 const { CREATE_NEW_REFRESH_TOKEN, GET_USER_BY_REFRESH_TOKEN } = TOKEN_QUERIES;
@@ -199,7 +200,7 @@ export const logoutController: RequestHandler = async (request, response) => {
   const refreshToken = request.cookies["refresh"];
 
   if (!refreshToken) {
-    response.status(400).json({ message: "Refresh token is required" });
+    response.status(400);
     return;
   }
 
@@ -315,5 +316,24 @@ export const resetPasswordController: RequestHandler = async (
       .json({ message: "Password has been reset successfully." });
   } catch (error) {
     response.status(500).json({ message: "Internal server error." });
+  }
+};
+
+export const deleteAccountController: RequestHandler = async (
+  request: AuthenticatedRequest,
+  response
+) => {
+  const { id } = request.user as AuthenticatedUserJWT;
+
+  if (!id) {
+    response.sendStatus(400);
+    return;
+  }
+
+  try {
+    await pool.query(DELETE_USER_ACCOUNT, [id]);
+    response.clearCookie("access").clearCookie("refresh").sendStatus(204);
+  } catch (error) {
+    response.sendStatus(500);
   }
 };

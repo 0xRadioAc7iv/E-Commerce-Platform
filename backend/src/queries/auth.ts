@@ -5,6 +5,7 @@ const USER_QUERIES = {
   CREATE_NEW_USER: `INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
   DELETE_REFRESH_TOKEN: `DELETE FROM refresh_tokens WHERE token = $1`,
   DELETE_ALL_REFRESH_TOKENS: `DELETE FROM refresh_tokens WHERE user_id = $1`,
+  DELETE_USER_ACCOUNT: "DELETE FROM users WHERE user_id = $1",
 };
 
 const TOKEN_QUERIES = {

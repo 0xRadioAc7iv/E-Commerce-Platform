@@ -26,4 +26,6 @@ router.post("/password/request-reset", requestPasswordResetController);
 
 router.post("/password/reset", resetPasswordController);
 
+router.delete("/account", authMiddleware);
+
 export default router;
