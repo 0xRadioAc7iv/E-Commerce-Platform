@@ -16,9 +16,9 @@
 
 ### Backend
 
-- [ ] API
-  - [ ] Edit User Info
-  - [ ] Add Rate Limits for Password Reset
+- [x] API
+  - [x] Edit User Info
+  - [x] Add Rate Limits for Password Reset
 - [ ] Products
   - [ ] Add Images & Store in Cloudinary
   - [ ] Cache Data

@@ -15,9 +15,11 @@ import { sendEmail } from "../../utils/mail";
 
 const {
   GET_USERS_BY_USERNAME_OR_EMAIL,
+  GET_USER_BY_ID,
   GET_USER_BY_USERNAME_OR_EMAIL,
   GET_USER_EMAIL,
   CREATE_NEW_USER,
+  UPDATE_USER_EMAIL,
   DELETE_REFRESH_TOKEN,
   DELETE_ALL_REFRESH_TOKENS,
   DELETE_USER_ACCOUNT,
@@ -316,6 +318,39 @@ export const resetPasswordController: RequestHandler = async (
       .json({ message: "Password has been reset successfully." });
   } catch (error) {
     response.status(500).json({ message: "Internal server error." });
+  }
+};
+
+export const editAccountController: RequestHandler = async (
+  request: AuthenticatedRequest,
+  response
+) => {
+  const { id } = request.user as AuthenticatedUserJWT;
+  const { email } = request.body;
+
+  if (!id) {
+    response.sendStatus(400);
+    return;
+  }
+
+  if (!email) {
+    response.status(401).json({ error: "Email Required!" });
+    return;
+  }
+
+  try {
+    const result = await pool.query(GET_USER_BY_ID, [id]);
+    const existingEmail = result.rows[0].email;
+
+    if (existingEmail === email) {
+      response.sendStatus(401).json({ error: "New Email same as Old Email" });
+      return;
+    }
+
+    await pool.query(UPDATE_USER_EMAIL, [id, email]);
+    response.sendStatus(201);
+  } catch (error) {
+    response.sendStatus(500);
   }
 };
 

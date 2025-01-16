@@ -2,6 +2,7 @@ import { Router } from "express";
 import { authMiddleware } from "../../../middlewares/auth";
 import {
   deleteAccountController,
+  editAccountController,
   logoutAllController,
   logoutController,
   refreshAccessTokenController,
@@ -10,6 +11,7 @@ import {
   signinController,
   signupController,
 } from "../../../controllers/api/auth";
+import { limiter } from "../../../utils/limiter";
 
 const router = Router();
 
@@ -23,9 +25,11 @@ router.post("/logout", authMiddleware, logoutController);
 
 router.post("/logout/all", authMiddleware, logoutAllController);
 
-router.post("/password/request-reset", requestPasswordResetController);
+router.post("/password/request-reset", limiter, requestPasswordResetController);
 
 router.post("/password/reset", resetPasswordController);
+
+router.put("/account", authMiddleware, editAccountController);
 
 router.delete("/account", authMiddleware, deleteAccountController);
 
