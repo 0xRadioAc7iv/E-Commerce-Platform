@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { authMiddleware } from "../../../middlewares/auth";
 import {
+  checkAuthStatusController,
   deleteAccountController,
   editAccountController,
   logoutAllController,
@@ -14,6 +15,8 @@ import {
 import { limiter } from "../../../utils/limiter";
 
 const router = Router();
+
+router.post("/check", authMiddleware, checkAuthStatusController);
 
 router.post("/signup", signupController);
 

@@ -17,6 +17,7 @@
 ### Backend
 
 - [x] API
+  - [ ] Check Signed In User
   - [x] Edit User Info
   - [x] Add Rate Limits for Password Reset
 - [ ] Products

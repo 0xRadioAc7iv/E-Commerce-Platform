@@ -33,6 +33,13 @@ const {
   RESET_PASSWORD_AND_CLEAR_OTP,
 } = PASSWORD_RESET_QUERIES;
 
+export const checkAuthStatusController: RequestHandler = async (
+  request,
+  response
+) => {
+  response.sendStatus(200);
+};
+
 export const signupController: RequestHandler = async (request, response) => {
   const { email, username, password } = request.body;
 
