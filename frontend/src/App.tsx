@@ -1,5 +1,4 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Success from "./pages/success";
 import Home from "./pages/Home";
 import ProfilePage from "./pages/Profile";
 import OrdersPage from "./pages/Orders";
@@ -10,6 +9,7 @@ import AuthPage from "./pages/Auth";
 import Layout from "./components/Layout";
 import ProtectedRoutes from "./components/ProtectedRoute";
 import { AuthProvider } from "./contexts/AuthContext";
+import ProductsPage from "./pages/Products";
 
 function App() {
   return (
@@ -17,6 +17,7 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
+          <Route path="/products" element={<ProductsPage />} />
 
           <Route element={<Layout />}>
             <Route path="/" element={<Home />} />
@@ -25,12 +26,10 @@ function App() {
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="/cart" element={<CartPage />} />
               <Route path="/wishlist" element={<WishlistPage />} />
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/payments" element={<PaymentsPage />} />
             </Route>
           </Route>
-
-          <Route path="/profile/orders" element={<OrdersPage />} />
-          <Route path="/profile/payments" element={<PaymentsPage />} />
-          <Route path="/success" element={<Success />} />
         </Routes>
       </AuthProvider>
     </BrowserRouter>

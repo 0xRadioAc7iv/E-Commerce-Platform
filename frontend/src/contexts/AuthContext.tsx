@@ -50,10 +50,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
       if (response.status === 200) {
         setAuthenticated(true);
-        navigate("/", { replace: true });
       }
     } catch (error) {
-      console.log(error);
+      setAuthenticated(false);
     }
   };
 
@@ -67,12 +66,9 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (response.status === 200) {
         setAuthenticated(true);
         navigate("/", { replace: true });
-      } else {
-        setAuthenticated(false);
-        navigate("/auth");
       }
     } catch (error) {
-      console.log(error);
+      setAuthenticated(false);
     }
   };
 
