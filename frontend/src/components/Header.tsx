@@ -10,7 +10,7 @@ export default function Header() {
           Store
         </a>
         <nav className="hidden md:flex items-center space-x-6">
-          <a href="/products/all" className="text-gray-600 hover:text-gray-900">
+          <a href="/products" className="text-gray-600 hover:text-gray-900">
             All Products
           </a>
           <a href="/sale" className="text-gray-600 hover:text-gray-900">

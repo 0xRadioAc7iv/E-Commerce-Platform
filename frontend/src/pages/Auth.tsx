@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -11,12 +11,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuthStore } from "@/store";
+import { useNavigate } from "react-router-dom";
 
 export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("signin");
-  const { signInUser } = useAuth();
+
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+  const signInUser = useAuthStore((state) => state.signInUser);
+
+  const navigate = useNavigate();
 
   const [signInData, setSignInData] = useState({
     email: "",
@@ -28,6 +33,12 @@ export default function AuthPage() {
     email: "",
     password: "",
     confirmPassword: "",
+  });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/", { replace: true });
+    }
   });
 
   const handleSignInChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -48,6 +59,13 @@ export default function AuthPage() {
     event.preventDefault();
     setIsLoading(true);
     await signInUser(signInData.email, signInData.password);
+
+    if (useAuthStore.getState().isAuthenticated) {
+      navigate("/", { replace: true });
+    } else {
+      console.log("ERROR: Sign in failed"); // Replace with Toasts
+      setIsLoading(false);
+    }
   };
 
   const handleSignUp = (event: React.FormEvent<HTMLFormElement>) => {

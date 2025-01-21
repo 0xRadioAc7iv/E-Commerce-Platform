@@ -12,12 +12,12 @@
 - [ ] Signup/Signin Flow
 - [ ] Pages
   - [ ] Search Results Page
-  - [ ] All Products Page
+  - [x] All Products Page
 
 ### Backend
 
 - [x] API
-  - [ ] Check Signed In User
+  - [x] Check Signed In User
   - [x] Edit User Info
   - [x] Add Rate Limits for Password Reset
 - [ ] Products
@@ -26,4 +26,4 @@
 
 ### Fix
 
-- [ ] Frontend Routing
+- [x] Frontend Routing

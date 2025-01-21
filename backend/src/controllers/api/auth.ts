@@ -34,10 +34,11 @@ const {
 } = PASSWORD_RESET_QUERIES;
 
 export const checkAuthStatusController: RequestHandler = async (
-  request,
+  request: AuthenticatedRequest,
   response
 ) => {
-  response.sendStatus(200);
+  const { id, email } = request.user as AuthenticatedUserJWT;
+  response.status(200).send({ id, email });
 };
 
 export const signupController: RequestHandler = async (request, response) => {
