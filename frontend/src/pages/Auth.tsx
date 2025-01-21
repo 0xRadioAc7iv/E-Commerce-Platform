@@ -69,9 +69,7 @@ export default function AuthPage() {
     }
   };
 
-  const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
-    // event.preventDefault();
-
+  const handleSignUp = async (_event: React.FormEvent<HTMLFormElement>) => {
     const { name, email, password, confirmPassword } = signUpData;
 
     if (password.length < 8 || password !== confirmPassword) {

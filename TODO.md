@@ -1,30 +1,25 @@
 ## Tasks
 
-- [ ] Tests
 - [ ] Deploy
   - [ ] Frontend
   - [ ] Backend
-- [ ] Set up CI/CD Pipeline
+- [ ] Set up Github Actions
 
 ### Frontend
 
-- [ ] Add Toasts
-- [ ] Logout Button (All Devices)
-- [ ] Signup/Signin Flow
 - [ ] Pages
   - [ ] Search Results Page
-  - [x] All Products Page
+- [ ] Add Toasts
+- [ ] Logout (All Devices)
+- [ ] Delete Account Button
+- [ ] Integrate APIs
 
 ### Backend
 
-- [x] API
-  - [x] Check Signed In User
-  - [x] Edit User Info
-  - [x] Add Rate Limits for Password Reset
 - [ ] Products
   - [ ] Add Images & Store in Cloudinary
   - [ ] Cache Data
 
 ### Fix
 
-- [x] Frontend Routing
+- [ ] Improve API Error Messages
