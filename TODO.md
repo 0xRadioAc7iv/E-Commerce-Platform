@@ -8,7 +8,8 @@
 
 ### Frontend
 
-- [ ] Logout Buttons
+- [ ] Add Toasts
+- [ ] Logout Button (All Devices)
 - [ ] Signup/Signin Flow
 - [ ] Pages
   - [ ] Search Results Page

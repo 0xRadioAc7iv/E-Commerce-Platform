@@ -11,7 +11,7 @@ export default function Hero() {
           Discover our curated collection of essential products for your
           everyday needs.
         </p>
-        <a href="/products/all">
+        <a href="/products">
           <Button size="lg">Shop Now</Button>
         </a>
       </div>

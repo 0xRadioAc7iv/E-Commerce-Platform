@@ -7,13 +7,17 @@ export default function Footer() {
             <h3 className="text-lg font-semibold mb-4">Quick ask</h3>
             <ul className="space-y-2">
               <li>
-                <a href="/about" className="text-gray-600 hover:text-gray-900">
+                <a
+                  href="https://0xradioactiv.xyz"
+                  target="_blank"
+                  className="text-gray-600 hover:text-gray-900"
+                >
                   About Us
                 </a>
               </li>
               <li>
                 <a
-                  href="/contact"
+                  href="mailto:manav18gadhiya@gmail.com"
                   className="text-gray-600 hover:text-gray-900"
                 >
                   Contact

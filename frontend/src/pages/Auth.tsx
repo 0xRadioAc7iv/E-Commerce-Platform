@@ -20,6 +20,7 @@ export default function AuthPage() {
 
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const signInUser = useAuthStore((state) => state.signInUser);
+  const signUpUser = useAuthStore((state) => state.signUpUser);
 
   const navigate = useNavigate();
 
@@ -68,12 +69,27 @@ export default function AuthPage() {
     }
   };
 
-  const handleSignUp = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const handleSignUp = async (event: React.FormEvent<HTMLFormElement>) => {
+    // event.preventDefault();
+
+    const { name, email, password, confirmPassword } = signUpData;
+
+    if (password.length < 8 || password !== confirmPassword) {
+      alert("Passwords do not match"); // Replace with Toasts
+      return;
+    }
+
     setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    const result = await signUpUser(email, name, password);
+    console.log(result);
+
+    if (result) {
+      navigate("/", { replace: true });
+    } else {
+      console.log("ERROR: Sign up failed"); // Replace with Toasts
+    }
+
+    setIsLoading(false);
   };
 
   return (

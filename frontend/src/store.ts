@@ -10,6 +10,13 @@ interface AuthState {
   setUser: (user: UserData | undefined) => void;
   checkAuthStatus: () => Promise<void>;
   signInUser: (email: string, password: string) => Promise<void>;
+  signUpUser: (
+    email: string,
+    username: string,
+    password: string
+  ) => Promise<boolean>;
+  signOutUser: () => Promise<void>;
+  resetAuth: () => void;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -48,6 +55,32 @@ export const useAuthStore = create<AuthState>()(
           console.error("Sign-in failed", error);
         }
       },
+
+      signUpUser: async (email, username, password) => {
+        try {
+          const response = await client.post("/api/auth/signup", {
+            email,
+            username,
+            password,
+          });
+
+          if (response.status === 201) return true;
+          return false;
+        } catch (error) {
+          console.error("Sign-up failed", error);
+          return false;
+        }
+      },
+
+      signOutUser: async () => {
+        try {
+          await client.post("/api/auth/logout");
+        } catch (error) {
+          set({ isAuthenticated: false, user: undefined });
+        }
+      },
+
+      resetAuth: () => set({ isAuthenticated: false, user: undefined }),
     }),
     {
       name: "auth-storage",
