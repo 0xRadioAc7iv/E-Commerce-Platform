@@ -91,7 +91,7 @@ export const signupController: RequestHandler = async (request, response) => {
     await pool.query(CREATE_NEW_USER, [username, email, hashedPassword]);
     response.sendStatus(201);
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "There was an error while signing up" });
   }
 };
 
@@ -151,7 +151,7 @@ export const signinController: RequestHandler = async (request, response) => {
       })
       .sendStatus(200);
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "There was an error while signing in" });
   }
 };
 
@@ -202,7 +202,9 @@ export const refreshAccessTokenController: RequestHandler = async (
       }
     );
   } catch (error) {
-    response.sendStatus(500);
+    response
+      .status(500)
+      .send({ error: "There was an error refreshing your access token" });
   }
 };
 
@@ -210,7 +212,7 @@ export const logoutController: RequestHandler = async (request, response) => {
   const refreshToken = request.cookies["refresh"];
 
   if (!refreshToken) {
-    response.status(400);
+    response.status(400).send({ error: "Refresh token is required." });
     return;
   }
 
@@ -218,7 +220,7 @@ export const logoutController: RequestHandler = async (request, response) => {
     await pool.query(DELETE_REFRESH_TOKEN, [refreshToken]);
     response.clearCookie("access").clearCookie("refresh").sendStatus(204);
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "There was an error logging you out" });
   }
 };
 
@@ -237,7 +239,9 @@ export const logoutAllController: RequestHandler = async (
     await pool.query(DELETE_ALL_REFRESH_TOKENS, [id]);
     response.clearCookie("access").clearCookie("refresh").sendStatus(204);
   } catch (error) {
-    response.sendStatus(500);
+    response
+      .status(500)
+      .send({ error: "There was an error while logging you out" });
   }
 };
 
@@ -273,7 +277,7 @@ export const requestPasswordResetController: RequestHandler = async (
       .status(200)
       .json({ message: "If the email exists, an OTP will be sent." });
   } catch (error) {
-    response.status(500).json({ message: "Internal server error." });
+    response.sendStatus(500);
   }
 };
 
@@ -325,7 +329,9 @@ export const resetPasswordController: RequestHandler = async (
       .status(200)
       .json({ message: "Password has been reset successfully." });
   } catch (error) {
-    response.status(500).json({ message: "Internal server error." });
+    response
+      .status(500)
+      .json({ message: "Error resetting your password. Please try again." });
   }
 };
 
@@ -337,7 +343,7 @@ export const editAccountController: RequestHandler = async (
   const { email } = request.body;
 
   if (!id) {
-    response.sendStatus(400);
+    response.status(400).send({ error: "User ID required" });
     return;
   }
 
@@ -356,9 +362,9 @@ export const editAccountController: RequestHandler = async (
     }
 
     await pool.query(UPDATE_USER_EMAIL, [id, email]);
-    response.sendStatus(201);
+    response.status(201).send({ message: "Accound Updated Successfully" });
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "Error Updating Account Details" });
   }
 };
 
@@ -369,14 +375,18 @@ export const deleteAccountController: RequestHandler = async (
   const { id } = request.user as AuthenticatedUserJWT;
 
   if (!id) {
-    response.sendStatus(400);
+    response.status(400).send({ error: "User ID required" });
     return;
   }
 
   try {
     await pool.query(DELETE_USER_ACCOUNT, [id]);
-    response.clearCookie("access").clearCookie("refresh").sendStatus(204);
+    response
+      .clearCookie("access")
+      .clearCookie("refresh")
+      .status(204)
+      .send({ message: "Account Deleted Successfully" });
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "Error Deleting Account" });
   }
 };

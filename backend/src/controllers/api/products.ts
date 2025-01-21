@@ -24,7 +24,9 @@ export const fetchPoductsController: RequestHandler = async (
           response.status(200).json(data);
         }
       } catch (error) {
-        response.sendStatus(500);
+        response
+          .status(500)
+          .send({ error: "Error Fetching Requested Product Details" });
       }
     } else {
       response
@@ -46,6 +48,6 @@ export const fetchPoductsController: RequestHandler = async (
     const data = queryResult.rows;
     response.status(200).json({ products: data, length: data.length });
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "Error Fetching Products Data" });
   }
 };

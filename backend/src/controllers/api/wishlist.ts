@@ -23,7 +23,7 @@ export const getAllWishlistedProducts: RequestHandler = async (
     if (data.length == 0) response.sendStatus(404);
     else response.status(200).json({ products: data, length: data.length });
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "Error Fetching Wishlist Data" });
   }
 };
 
@@ -43,7 +43,7 @@ export const addProductToWishlist: RequestHandler = async (
     await pool.query(ADD_PRODUCT_TO_WISHLIST, [id, productId]);
     response.sendStatus(201);
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "Error Adding Product to Wishlist" });
   }
 };
 
@@ -74,6 +74,8 @@ export const deleteProductFromWishlist: RequestHandler = async (
     await pool.query(DELETE_PRODUCT_FROM_WISHLIST, [id, productId]);
     response.sendStatus(204);
   } catch (error) {
-    response.sendStatus(500);
+    response
+      .status(500)
+      .send({ error: "Error Deleting Product from Wishlist" });
   }
 };

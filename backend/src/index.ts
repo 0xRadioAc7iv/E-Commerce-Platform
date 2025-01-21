@@ -15,7 +15,6 @@ app.use(
   "/api",
   cors({
     origin: process.env.FRONTEND_ORIGIN_URL || "*",
-    methods: ["*"],
     credentials: true,
   }),
   cookieParser(),

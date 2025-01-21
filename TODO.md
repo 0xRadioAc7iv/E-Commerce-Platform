@@ -11,7 +11,7 @@
   - [ ] Search Results Page
 - [ ] Add Toasts
 - [ ] Logout (All Devices)
-- [ ] Delete Account Button
+- [x] Delete Account Button
 - [ ] Integrate APIs
 
 ### Backend
@@ -22,4 +22,4 @@
 
 ### Fix
 
-- [ ] Improve API Error Messages
+- [x] Improve API Error Messages

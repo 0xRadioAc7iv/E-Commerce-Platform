@@ -39,6 +39,6 @@ export const generatePaymentLink: RequestHandler = async (
 
     response.status(201).send({ paymentLink: session.url });
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "Error Generating Payment Link" });
   }
 };

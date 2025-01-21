@@ -24,7 +24,7 @@ export const getAllCartItemsController: RequestHandler = async (
     if (data.length == 0) response.sendStatus(404);
     else response.status(200).json({ products: data, length: data.length });
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "Error Fetching Cart Data" });
   }
 };
 
@@ -51,7 +51,7 @@ export const addItemToCartController: RequestHandler = async (
     await pool.query(ADD_PRODUCT_TO_CART, [id, productId, productQuantity]);
     response.sendStatus(201);
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "Error Adding Product to Cart" });
   }
 };
 
@@ -82,7 +82,9 @@ export const updateItemQuantityToCartController: RequestHandler = async (
     ]);
     response.sendStatus(201);
   } catch (error) {
-    response.sendStatus(500);
+    response
+      .status(500)
+      .send({ error: "Error Updating Item Quantity in Cart" });
   }
 };
 
@@ -113,6 +115,6 @@ export const deleteItemFromCartController: RequestHandler = async (
     await pool.query(DELETE_PRODUCT_FROM_CART, [id, productId]);
     response.sendStatus(204);
   } catch (error) {
-    response.sendStatus(500);
+    response.status(500).send({ error: "Error Deleting Product from Cart" });
   }
 };
