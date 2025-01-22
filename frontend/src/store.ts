@@ -17,6 +17,7 @@ interface AuthState {
   ) => Promise<boolean>;
   signOutUser: () => Promise<void>;
   resetAuth: () => void;
+  refreshToken: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -33,8 +34,11 @@ export const useAuthStore = create<AuthState>()(
           const response = await client.post("/api/auth/check");
           if (response.status === 200) {
             set({ isAuthenticated: true, user: response.data as UserData });
+          } else if (response.status == 403) {
+            useAuthStore.getState().refreshToken();
           } else {
             set({ isAuthenticated: false, user: undefined });
+            useAuthStore.getState().resetAuth();
           }
         } catch (error) {
           console.error("Failed to check authentication status", error);
@@ -81,6 +85,16 @@ export const useAuthStore = create<AuthState>()(
       },
 
       resetAuth: () => set({ isAuthenticated: false, user: undefined }),
+
+      refreshToken: async () => {
+        try {
+          await client.post("/api/auth/token");
+          useAuthStore.getState().checkAuthStatus();
+        } catch (error) {
+          set({ isAuthenticated: false, user: undefined });
+          useAuthStore.getState().resetAuth();
+        }
+      },
     }),
     {
       name: "auth-storage",

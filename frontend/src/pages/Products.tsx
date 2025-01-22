@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,71 +10,21 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ShoppingCart } from "lucide-react";
+import productDefaultImage from "../assets/product_default.jpg";
+import client from "@/lib/axios";
 
-// Mock data for products
-const products = [
-  {
-    id: 1,
-    name: "Minimal Watch",
-    price: 99.99,
-    category: "Accessories",
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 2,
-    name: "Sleek Backpack",
-    price: 79.99,
-    category: "Bags",
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 3,
-    name: "Wireless Earbuds",
-    price: 129.99,
-    category: "Electronics",
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 4,
-    name: "Minimalist Wallet",
-    price: 39.99,
-    category: "Accessories",
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 5,
-    name: "Smart Speaker",
-    price: 89.99,
-    category: "Electronics",
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 6,
-    name: "Laptop Sleeve",
-    price: 29.99,
-    category: "Bags",
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 7,
-    name: "Wireless Mouse",
-    price: 49.99,
-    category: "Electronics",
-    image: "/placeholder.svg?height=200&width=200",
-  },
-  {
-    id: 8,
-    name: "Minimalist Desk Lamp",
-    price: 59.99,
-    category: "Home",
-    image: "/placeholder.svg?height=200&width=200",
-  },
-];
+type ProductData = {
+  id: number;
+  name: string;
+  price: number;
+  category: string;
+};
 
 export default function ProductsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [filterCategory, setFilterCategory] = useState("All");
+  const [products, setProducts] = useState<Array<ProductData>>([]);
 
   const filteredAndSortedProducts = products
     .filter(
@@ -88,6 +38,25 @@ export default function ProductsPage() {
       if (sortBy === "priceHigh") return b.price - a.price;
       return 0;
     });
+
+  const getProducts = async () => {
+    try {
+      const response = await client.get("/api/products");
+      const data = response.data;
+
+      return data.products;
+    } catch (error) {
+      alert("Failed to fetch products");
+    }
+  };
+
+  useEffect(() => {
+    getProducts()
+      .then((data) => {
+        setProducts(data);
+      })
+      .then(() => console.log(products));
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -132,12 +101,12 @@ export default function ProductsPage() {
           <Card key={product.id} className="flex flex-col">
             <CardContent className="p-4">
               <img
-                src={product.image || "/placeholder.svg"}
+                src={productDefaultImage}
                 alt={product.name}
                 className="w-full h-48 object-cover mb-4"
               />
               <h3 className="font-semibold text-lg mb-2">{product.name}</h3>
-              <p className="text-gray-600">${product.price.toFixed(2)}</p>
+              <p className="text-gray-600">${product.price}</p>
               <p className="text-sm text-gray-500 mt-1">{product.category}</p>
             </CardContent>
             <CardFooter className="mt-auto">

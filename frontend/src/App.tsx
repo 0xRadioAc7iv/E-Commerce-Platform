@@ -15,10 +15,10 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="/products" element={<ProductsPage />} />
 
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
+          <Route path="/products" element={<ProductsPage />} />
 
           <Route element={<ProtectedRoutes />}>
             <Route path="/profile" element={<ProfilePage />} />

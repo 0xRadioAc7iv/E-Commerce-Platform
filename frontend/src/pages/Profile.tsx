@@ -12,18 +12,19 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function ProfilePage() {
-  const id = useAuthStore((state) => state.user?.id);
+  const user = useAuthStore((state) => state.user);
   const reset = useAuthStore((state) => state.resetAuth);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   const navigate = useNavigate();
 
   const handleDeleteAccount = async () => {
-    setIsLoading(true);
+    setIsDeletingAccount(true);
 
     try {
-      const data = { id: id };
+      const data = { id: user?.id };
       const response = await client.delete("/api/auth/account", {
         data,
       });
@@ -36,8 +37,27 @@ export default function ProfilePage() {
       alert("Failed to delete account");
     }
 
-    setIsLoading(false);
+    setIsDeletingAccount(false);
   };
+
+  const handleSignOutOfAllDevices = async () => {
+    setIsSigningOut(true);
+
+    try {
+      const response = await client.post("/api/auth/logout/all");
+
+      if (response.status === 204) {
+        reset();
+        navigate("/", { replace: true });
+      }
+    } catch (error) {
+      alert("Failed to sign out!");
+    }
+
+    setIsSigningOut(false);
+  };
+
+  const handleUpdateEmail = async () => {};
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -57,8 +77,11 @@ export default function ProfilePage() {
               </p>
             </div>
           </CardContent>
-          <CardFooter>
-            <Button variant="outline">Edit Information</Button>
+          <CardFooter className="flex gap-2">
+            <Button variant="outline" onClick={handleUpdateEmail}>
+              Update Email
+            </Button>
+            <Button variant="outline">Change Password</Button>
           </CardFooter>
         </Card>
         <Card>
@@ -74,11 +97,19 @@ export default function ProfilePage() {
             </Button>
             <Button
               variant="destructive"
-              disabled={isLoading}
+              disabled={isSigningOut}
+              className="w-full"
+              onClick={handleSignOutOfAllDevices}
+            >
+              {isSigningOut ? "Signing Out..." : "Sign out of All Devices"}
+            </Button>
+            <Button
+              variant="destructive"
+              disabled={isDeletingAccount}
               className="w-full"
               onClick={handleDeleteAccount}
             >
-              {isLoading ? "Deleting..." : "Delete Account"}
+              {isDeletingAccount ? "Deleting..." : "Delete Account"}
             </Button>
           </CardContent>
         </Card>

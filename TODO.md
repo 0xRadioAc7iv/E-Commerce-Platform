@@ -8,11 +8,15 @@
 ### Frontend
 
 - [ ] Pages
+  - [ ] Product Details Page
   - [ ] Search Results Page
 - [ ] Add Toasts
-- [ ] Logout (All Devices)
-- [x] Delete Account Button
 - [ ] Integrate APIs
+  - [ ] Auth
+  - [ ] Cart
+  - [ ] Wishlist
+  - [ ] Payment
+  - [x] Products
 
 ### Backend
 
@@ -22,4 +26,4 @@
 
 ### Fix
 
-- [x] Improve API Error Messages
+- [ ] Categories in All Products Page
