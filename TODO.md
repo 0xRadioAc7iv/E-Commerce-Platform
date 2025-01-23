@@ -8,7 +8,6 @@
 ### Frontend
 
 - [ ] Pages
-  - [ ] Product Details Page
   - [ ] Search Results Page
 - [ ] Add Toasts
 - [ ] Integrate APIs

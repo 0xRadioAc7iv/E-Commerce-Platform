@@ -1,10 +1,11 @@
 const USER_QUERIES = {
   GET_USERS_BY_USERNAME_OR_EMAIL: `SELECT username, email FROM users WHERE username = $1 OR email = $2`,
-  GET_USER_BY_ID: "SELECT email FROM users WHERE id = $1",
+  GET_EXISTING_USERNAME_OR_EMAIL: `SELECT username, email FROM users WHERE (username = $1 OR email = $2) AND user_id != $3`,
   GET_USER_BY_USERNAME_OR_EMAIL: `SELECT user_id, username, email, password FROM users WHERE username = $1 OR email = $2`,
   GET_USER_EMAIL: `SELECT email FROM users WHERE email = $1;`,
   CREATE_NEW_USER: `INSERT INTO users (username, email, password) VALUES ($1, $2, $3)`,
-  UPDATE_USER_EMAIL: "UPDATE users SET email = $2 WHERE id = $1",
+  UPDATE_USER_DATA:
+    "UPDATE users SET email = $2, username = $3 WHERE user_id = $1",
   DELETE_REFRESH_TOKEN: `DELETE FROM refresh_tokens WHERE token = $1`,
   DELETE_ALL_REFRESH_TOKENS: `DELETE FROM refresh_tokens WHERE user_id = $1`,
   DELETE_USER_ACCOUNT: "DELETE FROM users WHERE user_id = $1",

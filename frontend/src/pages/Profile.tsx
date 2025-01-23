@@ -14,9 +14,15 @@ import { useNavigate } from "react-router-dom";
 export default function ProfilePage() {
   const user = useAuthStore((state) => state.user);
   const reset = useAuthStore((state) => state.resetAuth);
+  const setUser = useAuthStore((state) => state.setUser);
 
   const [isSigningOut, setIsSigningOut] = useState(false);
   const [isDeletingAccount, setIsDeletingAccount] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    username: user?.username,
+    email: user?.email,
+  });
 
   const navigate = useNavigate();
 
@@ -57,7 +63,19 @@ export default function ProfilePage() {
     setIsSigningOut(false);
   };
 
-  const handleUpdateEmail = async () => {};
+  const handleUpdateProfile = async () => {
+    try {
+      const response = await client.put("/api/auth/account", formData);
+      if (response.status === 200) {
+        const updatedUserData = response.data.user;
+        setUser(updatedUserData);
+        // Add Toast here
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      alert("Failed to update profile"); // Replace with Toast
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -70,16 +88,16 @@ export default function ProfilePage() {
           <CardContent>
             <div className="space-y-2">
               <p>
-                <strong>Name:</strong> John Doe
+                <strong>Username:</strong> {user?.username}
               </p>
               <p>
-                <strong>Email:</strong> john.doe@example.com
+                <strong>Email:</strong> {user?.email}
               </p>
             </div>
           </CardContent>
           <CardFooter className="flex gap-2">
-            <Button variant="outline" onClick={handleUpdateEmail}>
-              Update Email
+            <Button variant="outline" onClick={() => setIsModalOpen(true)}>
+              Update Profile
             </Button>
             <Button variant="outline">Change Password</Button>
           </CardFooter>
@@ -114,6 +132,64 @@ export default function ProfilePage() {
           </CardContent>
         </Card>
       </div>
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h2 className="text-xl font-semibold mb-4">Update Profile</h2>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleUpdateProfile();
+              }}
+            >
+              <div className="mb-4">
+                <label
+                  className="block text-sm font-medium mb-2"
+                  htmlFor="username"
+                >
+                  Username
+                </label>
+                <input
+                  type="text"
+                  id="username"
+                  value={formData.username}
+                  onChange={(e) =>
+                    setFormData({ ...formData, username: e.target.value })
+                  }
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div className="mb-4">
+                <label
+                  className="block text-sm font-medium mb-2"
+                  htmlFor="email"
+                >
+                  Email
+                </label>
+                <input
+                  type="email"
+                  id="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  className="w-full p-2 border border-gray-300 rounded"
+                />
+              </div>
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setIsModalOpen(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit">Save</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

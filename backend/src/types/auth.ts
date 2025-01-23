@@ -13,6 +13,7 @@ export interface AuthenticatedRequest extends Request {
 export type AuthenticatedUserJWT = {
   id: string;
   email: string;
+  username: string;
   iat: number;
   exp: number;
 };

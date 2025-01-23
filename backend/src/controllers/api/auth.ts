@@ -15,11 +15,11 @@ import { sendEmail } from "../../utils/mail";
 
 const {
   GET_USERS_BY_USERNAME_OR_EMAIL,
-  GET_USER_BY_ID,
+  GET_EXISTING_USERNAME_OR_EMAIL,
   GET_USER_BY_USERNAME_OR_EMAIL,
   GET_USER_EMAIL,
   CREATE_NEW_USER,
-  UPDATE_USER_EMAIL,
+  UPDATE_USER_DATA,
   DELETE_REFRESH_TOKEN,
   DELETE_ALL_REFRESH_TOKENS,
   DELETE_USER_ACCOUNT,
@@ -37,8 +37,8 @@ export const checkAuthStatusController: RequestHandler = async (
   request: AuthenticatedRequest,
   response
 ) => {
-  const { id, email } = request.user as AuthenticatedUserJWT;
-  response.status(200).send({ id, email });
+  const { id, email, username } = request.user as AuthenticatedUserJWT;
+  response.status(200).send({ id, email, username });
 };
 
 export const signupController: RequestHandler = async (request, response) => {
@@ -127,7 +127,12 @@ export const signinController: RequestHandler = async (request, response) => {
       return;
     }
 
-    const payload = { id: user.user_id, email: user.email };
+    const payload = {
+      id: user.user_id,
+      email: user.email,
+      username: user.username,
+    };
+
     const accessToken = generateJsonWebToken({ user: payload, isAccess: true });
     const refreshToken = generateJsonWebToken({
       user: payload,
@@ -340,10 +345,15 @@ export const editAccountController: RequestHandler = async (
   response
 ) => {
   const { id } = request.user as AuthenticatedUserJWT;
-  const { email } = request.body;
+  const { email, username } = request.body;
 
   if (!id) {
     response.status(400).send({ error: "User ID required" });
+    return;
+  }
+
+  if (!username) {
+    response.status(401).json({ error: "Username Required!" });
     return;
   }
 
@@ -353,17 +363,27 @@ export const editAccountController: RequestHandler = async (
   }
 
   try {
-    const result = await pool.query(GET_USER_BY_ID, [id]);
-    const existingEmail = result.rows[0].email;
+    const result = await pool.query(GET_EXISTING_USERNAME_OR_EMAIL, [
+      username,
+      email,
+      id,
+    ]);
 
-    if (existingEmail === email) {
-      response.sendStatus(401).json({ error: "New Email same as Old Email" });
+    if (result.rows.length > 0) {
+      response.status(401).send({ error: "Email/Username is already in use!" });
       return;
     }
 
-    await pool.query(UPDATE_USER_EMAIL, [id, email]);
-    response.status(201).send({ message: "Accound Updated Successfully" });
+    await pool.query(UPDATE_USER_DATA, [id, email, username]);
+    response.status(200).send({
+      message: "Account Updated Successfully",
+      user: {
+        email: email,
+        username: username,
+      },
+    });
   } catch (error) {
+    console.log(error);
     response.status(500).send({ error: "Error Updating Account Details" });
   }
 };
