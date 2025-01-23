@@ -265,9 +265,7 @@ export const requestPasswordResetController: RequestHandler = async (
     const queryResult = await pool.query(GET_USER_EMAIL, [email]);
 
     if (queryResult.rows.length === 0) {
-      response
-        .status(200)
-        .json({ message: "If the email exists, an OTP will be sent." });
+      response.status(401).json({ error: "Email not registered." });
       return;
     }
 

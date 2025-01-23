@@ -98,16 +98,16 @@ export default function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button
-              onClick={handleSignIn}
-              variant="ghost"
-              className="flex items-center"
-            >
-              <User className="h-6 w-6 mr-2" />
-              <a href="/auth">
+            <a href="/auth">
+              <Button
+                onClick={handleSignIn}
+                variant="ghost"
+                className="flex items-center"
+              >
+                <User className="h-6 w-6 mr-2" />
                 <span className="hidden md:inline">Sign In</span>
-              </a>
-            </Button>
+              </Button>
+            </a>
           )}
           <Button size="icon" variant="ghost" className="md:hidden">
             <Search className="h-6 w-6" />

@@ -191,9 +191,17 @@ export default function AuthPage() {
             </TabsContent>
           </Tabs>
         </CardContent>
-        <CardFooter className="flex justify-center">
-          <a href="/" className="text-sm text-gray-600 hover:text-gray-900">
-            Back to Home
+        <CardFooter className="flex flex-col justify-center">
+          <a href="/reset-password">
+            <Button
+              variant="ghost"
+              className="text-sm text-blue-600 hover:text-blue-900"
+            >
+              Forgot your password?
+            </Button>
+          </a>
+          <a href="/">
+            <Button variant="ghost">Back to Home</Button>
           </a>
         </CardFooter>
       </Card>

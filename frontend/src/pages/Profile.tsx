@@ -111,7 +111,7 @@ export default function ProfilePage() {
               <a href="/orders">View Past Orders</a>
             </Button>
             <Button className="w-full" asChild>
-              <a href="/payments">View Payment Methods</a>
+              <a href="/payments">View Payments</a>
             </Button>
             <Button
               variant="destructive"

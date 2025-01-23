@@ -9,12 +9,14 @@ import AuthPage from "./pages/Auth";
 import Layout from "./components/Layout";
 import ProtectedRoutes from "./components/ProtectedRoute";
 import ProductsPage from "./pages/Products";
+import ResetPasswordPage from "./pages/ResetPassword";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
 
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
