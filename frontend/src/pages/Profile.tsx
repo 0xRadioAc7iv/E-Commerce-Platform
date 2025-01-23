@@ -99,7 +99,9 @@ export default function ProfilePage() {
             <Button variant="outline" onClick={() => setIsModalOpen(true)}>
               Update Profile
             </Button>
-            <Button variant="outline">Change Password</Button>
+            <a href="/reset-password">
+              <Button variant="outline">Change Password</Button>
+            </a>
           </CardFooter>
         </Card>
         <Card>

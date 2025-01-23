@@ -9,12 +9,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, HeartIcon } from "lucide-react";
 import productDefaultImage from "../assets/product_default.jpg";
 import client from "@/lib/axios";
 
 type ProductData = {
-  id: number;
+  product_id: number;
   name: string;
   price: number;
   category: string;
@@ -25,6 +25,7 @@ export default function ProductsPage() {
   const [sortBy, setSortBy] = useState("name");
   const [filterCategory, setFilterCategory] = useState("All");
   const [products, setProducts] = useState<Array<ProductData>>([]);
+  const [categories, setCategories] = useState<Array<string>>([]);
 
   const filteredAndSortedProducts = products
     .filter(
@@ -53,9 +54,17 @@ export default function ProductsPage() {
   useEffect(() => {
     getProducts()
       .then((data) => {
-        setProducts(data);
+        if (data) {
+          setProducts(data);
+
+          const uniqueCategories: Array<string> = Array.from(
+            new Set(data.map((product: ProductData) => product.category))
+          );
+
+          setCategories(["All", ...uniqueCategories]);
+        }
       })
-      .then(() => console.log(products));
+      .catch(() => alert("Error loading products"));
   }, []);
 
   return (
@@ -76,11 +85,11 @@ export default function ProductsPage() {
               <SelectValue placeholder="Category" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="All">All Categories</SelectItem>
-              <SelectItem value="Accessories">Accessories</SelectItem>
-              <SelectItem value="Bags">Bags</SelectItem>
-              <SelectItem value="Electronics">Electronics</SelectItem>
-              <SelectItem value="Home">Home</SelectItem>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={sortBy} onValueChange={setSortBy}>
@@ -98,7 +107,7 @@ export default function ProductsPage() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredAndSortedProducts.map((product) => (
-          <Card key={product.id} className="flex flex-col">
+          <Card key={product.product_id} className="flex flex-col">
             <CardContent className="p-4">
               <img
                 src={productDefaultImage}
@@ -109,9 +118,12 @@ export default function ProductsPage() {
               <p className="text-gray-600">${product.price}</p>
               <p className="text-sm text-gray-500 mt-1">{product.category}</p>
             </CardContent>
-            <CardFooter className="mt-auto">
-              <Button className="w-full">
-                <ShoppingCart className="mr-2 h-4 w-4" /> Add to Cart
+            <CardFooter className="flex gap-2">
+              <Button className="">
+                <ShoppingCart className="h-4 w-4" /> Add to Cart
+              </Button>
+              <Button className="">
+                <HeartIcon className="h-4 w-4" /> Wishlist
               </Button>
             </CardFooter>
           </Card>
