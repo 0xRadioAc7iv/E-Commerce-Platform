@@ -18,7 +18,6 @@ export default function WishlistPage() {
   const getWishlistItems = async () => {
     try {
       const response = await client.get("/api/wishlist");
-      console.log(response.data);
       const { products } = response.data;
 
       setWishlistItems(products);
@@ -28,7 +27,48 @@ export default function WishlistPage() {
     }
   };
 
-  const removeFromWishlist = async (productId: number) => {};
+  const removeFromWishlist = async (productId: number) => {
+    setWishlistItems((prevItems) =>
+      prevItems.filter((item) => item.product_id !== productId)
+    );
+
+    try {
+      const response = await client.delete("/api/wishlist", {
+        data: { productId: productId },
+      });
+
+      if (response.status !== 204) {
+        alert("Failed to remove item from wishlist");
+        await getWishlistItems();
+      }
+    } catch (error) {
+      alert("Error removing item from wishlist");
+      await getWishlistItems();
+    }
+  };
+
+  const addToCart = async (productId: number) => {
+    setWishlistItems((prevItems) =>
+      prevItems.map((item) =>
+        item.product_id === productId ? { ...item, inCart: true } : item
+      )
+    );
+
+    try {
+      const response = await client.post("/api/cart", {
+        productId: productId,
+        productQuantity: 1,
+      });
+
+      if (response.status !== 201) {
+        alert("Failed to add item to cart");
+        await getWishlistItems();
+      }
+    } catch (error) {
+      alert("Error adding item to cart");
+      await getWishlistItems();
+    }
+  };
 
   useEffect(() => {
     getWishlistItems();
@@ -65,7 +105,7 @@ export default function WishlistPage() {
                   <Heart className="h-4 w-4 mr-2" />
                   Remove
                 </Button>
-                <Button>
+                <Button onClick={() => addToCart(item.product_id)}>
                   <ShoppingCart className="h-4 w-4 mr-2" />
                   Add to Cart
                 </Button>
