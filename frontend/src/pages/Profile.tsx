@@ -109,12 +109,6 @@ export default function ProfilePage() {
             <CardTitle>Account Actions</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button className="w-full" asChild>
-              <a href="/orders">View Past Orders</a>
-            </Button>
-            <Button className="w-full" asChild>
-              <a href="/payments">View Payments</a>
-            </Button>
             <Button
               variant="destructive"
               disabled={isSigningOut}

@@ -8,11 +8,8 @@
 ### Frontend
 
 - [ ] Pages
-  - [ ] Product Page
   - [ ] Search Results Page
 - [ ] Add Toasts
-- [ ] Integrate APIs
-  - [ ] Payment
 
 ### Backend
 

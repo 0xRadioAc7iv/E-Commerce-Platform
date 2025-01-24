@@ -19,6 +19,13 @@ type ProductData = {
   quantity: number;
 };
 
+type CheckoutItem = {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+};
+
 export default function CartPage() {
   const [cartItems, setCartItems] = useState<Array<ProductData>>([]);
 
@@ -75,13 +82,38 @@ export default function CartPage() {
       const response = await client.get("/api/cart");
       const products = response.data.products;
 
-      console.log(products);
-
       if (response.status === 200) {
         setCartItems(products);
       }
     } catch (error) {
       alert(error);
+    }
+  };
+
+  const checkout = async () => {
+    const checkOutItems: Array<CheckoutItem> = cartItems.map((item) => {
+      return {
+        id: item.product_id.toString(),
+        name: item.name,
+        price: Number(item.price),
+        quantity: item.quantity,
+      };
+    });
+
+    try {
+      const response = await client.post("/api/payments", {
+        products: checkOutItems,
+      });
+
+      if (response.status !== 201) {
+        alert("Error while checking out");
+        return;
+      }
+
+      const paymentLink = response.data.paymentLink;
+      window.location.href = paymentLink;
+    } catch (error) {
+      alert("Error while checking out");
     }
   };
 
@@ -175,7 +207,9 @@ export default function CartPage() {
                 </div>
               </CardContent>
               <CardFooter>
-                <Button className="w-full">Proceed to Checkout</Button>
+                <Button className="w-full" onClick={() => checkout()}>
+                  Proceed to Checkout
+                </Button>
               </CardFooter>
             </Card>
           </div>
