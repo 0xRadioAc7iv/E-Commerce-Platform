@@ -26,6 +26,7 @@ export default function ProductsPage() {
   const [filterCategory, setFilterCategory] = useState("All");
   const [products, setProducts] = useState<Array<ProductData>>([]);
   const [categories, setCategories] = useState<Array<string>>([]);
+  const [, setWishlistItems] = useState<Array<ProductData>>([]);
 
   const filteredAndSortedProducts = products
     .filter(
@@ -48,6 +49,45 @@ export default function ProductsPage() {
       return data.products;
     } catch (error) {
       alert("Failed to fetch products");
+    }
+  };
+
+  const addToWishlist = async (productId: number) => {
+    setWishlistItems((prevItems) =>
+      prevItems.filter((item) => item.product_id !== productId)
+    );
+
+    try {
+      const response = await client.post("/api/wishlist", {
+        productId: productId,
+      });
+
+      if (response.status !== 204) {
+        alert("Failed to add item to wishlist");
+      }
+    } catch (error) {
+      alert("Error adding item to wishlist");
+    }
+  };
+
+  const addToCart = async (productId: number) => {
+    setWishlistItems((prevItems) =>
+      prevItems.map((item) =>
+        item.product_id === productId ? { ...item, inCart: true } : item
+      )
+    );
+
+    try {
+      const response = await client.post("/api/cart", {
+        productId: productId,
+        productQuantity: 1,
+      });
+
+      if (response.status !== 201) {
+        alert("Failed to add item to cart");
+      }
+    } catch (error) {
+      alert("Error adding item to cart");
     }
   };
 
@@ -119,10 +159,10 @@ export default function ProductsPage() {
               <p className="text-sm text-gray-500 mt-1">{product.category}</p>
             </CardContent>
             <CardFooter className="flex gap-2">
-              <Button className="">
+              <Button onClick={() => addToCart(product.product_id)}>
                 <ShoppingCart className="h-4 w-4" /> Add to Cart
               </Button>
-              <Button className="">
+              <Button onClick={() => addToWishlist(product.product_id)}>
                 <HeartIcon className="h-4 w-4" /> Wishlist
               </Button>
             </CardFooter>

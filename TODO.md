@@ -12,8 +12,6 @@
   - [ ] Search Results Page
 - [ ] Add Toasts
 - [ ] Integrate APIs
-  - [ ] Cart
-  - [ ] Wishlist
   - [ ] Payment
 
 ### Backend

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,43 +9,85 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Minus, Plus, X } from "lucide-react";
+import client from "@/lib/axios";
+import productDefaultImage from "../assets/product_default.jpg";
 
-const initialCartItems = [
-  {
-    id: 1,
-    name: "Minimal Watch",
-    price: 99.99,
-    quantity: 1,
-    image: "/placeholder.svg?height=80&width=80",
-  },
-  {
-    id: 2,
-    name: "Sleek Backpack",
-    price: 79.99,
-    quantity: 2,
-    image: "/placeholder.svg?height=80&width=80",
-  },
-];
+type ProductData = {
+  product_id: number;
+  name: string;
+  price: number;
+  quantity: number;
+};
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState(initialCartItems);
+  const [cartItems, setCartItems] = useState<Array<ProductData>>([]);
 
-  const updateQuantity = (id: number, newQuantity: number) => {
+  const updateQuantity = async (id: number, newQuantity: number) => {
     setCartItems((items) =>
       items.map((item) =>
-        item.id === id ? { ...item, quantity: Math.max(0, newQuantity) } : item
+        item.product_id === id
+          ? { ...item, quantity: Math.max(0, newQuantity) }
+          : item
       )
     );
+
+    try {
+      const response = await client.patch("/api/cart", {
+        productId: id,
+        productQuantity: newQuantity,
+      });
+
+      if (response.status !== 201) {
+        alert("Failed to update item quantity cart");
+        getCartItems();
+      }
+    } catch (error) {
+      alert(error);
+      getCartItems();
+    }
   };
 
-  const removeItem = (id: number) => {
-    setCartItems((items) => items.filter((item) => item.id !== id));
+  const removeItemFromCart = async (id: number) => {
+    setCartItems((items) => items.filter((item) => item.product_id !== id));
+
+    try {
+      const response = await client.delete("/api/cart", {
+        data: { productId: id },
+      });
+
+      if (response.status !== 204) {
+        alert("Failed to remove item from cart");
+        getCartItems();
+      }
+    } catch (error) {
+      alert(error);
+      getCartItems();
+    }
   };
 
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+
+  const getCartItems = async () => {
+    try {
+      const response = await client.get("/api/cart");
+      const products = response.data.products;
+
+      console.log(products);
+
+      if (response.status === 200) {
+        setCartItems(products);
+      }
+    } catch (error) {
+      alert(error);
+    }
+  };
+
+  useEffect(() => {
+    getCartItems();
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -61,22 +103,22 @@ export default function CartPage() {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="md:col-span-2">
             {cartItems.map((item) => (
-              <Card key={item.id} className="mb-4">
+              <Card key={item.product_id} className="mb-4">
                 <CardContent className="flex items-center p-4">
                   <img
-                    src={item.image || "/placeholder.svg"}
+                    src={productDefaultImage}
                     alt={item.name}
                     className="w-20 h-20 object-cover mr-4"
                   />
                   <div className="flex-grow">
                     <h3 className="font-semibold">{item.name}</h3>
-                    <p className="text-gray-600">${item.price.toFixed(2)}</p>
+                    <p className="text-gray-600">${item.price}</p>
                     <div className="flex items-center mt-2">
                       <Button
                         size="icon"
                         variant="outline"
                         onClick={() =>
-                          updateQuantity(item.id, item.quantity - 1)
+                          updateQuantity(item.product_id, item.quantity - 1)
                         }
                       >
                         <Minus className="h-4 w-4" />
@@ -86,7 +128,10 @@ export default function CartPage() {
                         min="0"
                         value={item.quantity}
                         onChange={(e) =>
-                          updateQuantity(item.id, parseInt(e.target.value))
+                          updateQuantity(
+                            item.product_id,
+                            parseInt(e.target.value)
+                          )
                         }
                         className="w-16 mx-2 text-center"
                       />
@@ -94,7 +139,7 @@ export default function CartPage() {
                         size="icon"
                         variant="outline"
                         onClick={() =>
-                          updateQuantity(item.id, item.quantity + 1)
+                          updateQuantity(item.product_id, item.quantity + 1)
                         }
                       >
                         <Plus className="h-4 w-4" />
@@ -104,7 +149,7 @@ export default function CartPage() {
                   <Button
                     size="icon"
                     variant="ghost"
-                    onClick={() => removeItem(item.id)}
+                    onClick={() => removeItemFromCart(item.product_id)}
                   >
                     <X className="h-4 w-4" />
                   </Button>
