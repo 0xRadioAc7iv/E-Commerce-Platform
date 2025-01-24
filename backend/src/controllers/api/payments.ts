@@ -33,7 +33,7 @@ export const generatePaymentLink: RequestHandler = async (
         userId: id,
         orderItems: JSON.stringify(lineItems),
       },
-      success_url: `${process.env.FRONTEND_ORIGIN_URL}/success?session_id={CHECKOUT_SESSION_ID}`,
+      success_url: `${process.env.FRONTEND_ORIGIN_URL}/?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: cancelUrl,
     });
 

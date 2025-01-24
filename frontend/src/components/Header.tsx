@@ -10,7 +10,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthStore } from "@/store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 export default function Header() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -19,6 +20,21 @@ export default function Header() {
   const user = useAuthStore((state) => state.user);
 
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  useEffect(() => {
+    const queryFromURL = searchParams.get("query");
+    if (queryFromURL) {
+      setSearchQuery(queryFromURL);
+    }
+  }, [searchParams]);
+
+  const handleSearch = () => {
+    if (searchQuery.trim()) {
+      navigate(`/search?query=${encodeURIComponent(searchQuery)}`);
+    }
+  };
 
   const handleSignIn = () => {
     navigate("/", { replace: true });
@@ -50,11 +66,18 @@ export default function Header() {
               type="search"
               placeholder="Search..."
               className="w-full pr-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSearch();
+              }}
+              aria-label="Search products"
             />
             <Button
               size="icon"
               variant="ghost"
               className="absolute right-0 top-0"
+              onClick={handleSearch}
             >
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
