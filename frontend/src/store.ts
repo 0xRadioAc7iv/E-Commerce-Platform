@@ -4,10 +4,11 @@ import client from "./lib/axios";
 import { UserData } from "./lib/types";
 
 interface AuthState {
+  // Data
   isAuthenticated: boolean;
   user: UserData | undefined;
-  setAuthenticated: (isAuthenticated: boolean) => void;
-  setUser: (user: UserData | undefined) => void;
+
+  // Methods
   checkAuthStatus: () => Promise<void>;
   signInUser: (email: string, password: string) => Promise<void>;
   signUpUser: (
@@ -22,27 +23,24 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       isAuthenticated: false,
       user: undefined,
-
-      setAuthenticated: (isAuthenticated) => set({ isAuthenticated }),
-      setUser: (user) => set({ user }),
 
       checkAuthStatus: async () => {
         try {
           const response = await client.post("/api/auth/check");
+
           if (response.status === 200) {
             set({ isAuthenticated: true, user: response.data as UserData });
-          } else if (response.status == 403) {
-            useAuthStore.getState().refreshToken();
+          } else if (response.status == 401 || response.status == 403) {
+            get().refreshToken();
           } else {
-            set({ isAuthenticated: false, user: undefined });
-            useAuthStore.getState().resetAuth();
+            get().resetAuth();
           }
         } catch (error) {
           console.error("Failed to check authentication status", error);
-          set({ isAuthenticated: false, user: undefined });
+          get().resetAuth();
         }
       },
 
@@ -52,9 +50,8 @@ export const useAuthStore = create<AuthState>()(
             email,
             password,
           });
-          if (response.status === 200) {
-            await useAuthStore.getState().checkAuthStatus();
-          }
+
+          if (response.status === 200) await get().checkAuthStatus();
         } catch (error) {
           console.error("Sign-in failed", error);
         }
@@ -80,7 +77,9 @@ export const useAuthStore = create<AuthState>()(
         try {
           await client.post("/api/auth/logout");
         } catch (error) {
-          set({ isAuthenticated: false, user: undefined });
+          console.log(error);
+        } finally {
+          get().resetAuth();
         }
       },
 
@@ -88,11 +87,12 @@ export const useAuthStore = create<AuthState>()(
 
       refreshToken: async () => {
         try {
-          await client.post("/api/auth/token");
-          useAuthStore.getState().checkAuthStatus();
+          const response = await client.post("/api/auth/token");
+
+          if (response.status === 200) get().checkAuthStatus();
+          else get().resetAuth();
         } catch (error) {
-          set({ isAuthenticated: false, user: undefined });
-          useAuthStore.getState().resetAuth();
+          get().resetAuth();
         }
       },
     }),
