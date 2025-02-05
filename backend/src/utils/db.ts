@@ -40,33 +40,40 @@ export const createTablesIfNotExists = async (createTables = false) => {
 };
 
 export const buildFilterQuery = (
-  category: string,
-  priceLow: string,
-  priceHigh: string,
-  search: string
+  category?: string,
+  priceLow?: string,
+  priceHigh?: string,
+  search?: string
 ) => {
-  const conditions = [];
   let baseQuery = PRODUCT_QUERIES.GET_ALL_PRODUCTS;
+  const conditions: string[] = [];
+  const values = [];
+  let paramIndex = 1;
 
   if (category) {
-    conditions.push(`category = '${category}'`);
+    conditions.push(`category = $${paramIndex++}`);
+    values.push(category);
   }
   if (priceLow) {
-    conditions.push(`price >= ${priceLow}`);
+    conditions.push(`price >= $${paramIndex++}`);
+    values.push(Number(priceLow));
   }
   if (priceHigh) {
-    conditions.push(`price <= ${priceHigh}`);
+    conditions.push(`price <= $${paramIndex++}`);
+    values.push(Number(priceHigh));
   }
   if (search) {
     conditions.push(
-      `name LIKE '%${search}%' OR description LIKE '%${search}%'`
+      `(name ILIKE $${paramIndex} OR description ILIKE $${paramIndex})`
     );
+    values.push(`%${search}%`);
   }
+
   if (conditions.length > 0) {
     baseQuery += " WHERE " + conditions.join(" AND ");
   }
 
-  return baseQuery;
+  return { query: baseQuery, values };
 };
 
 export default pool;
