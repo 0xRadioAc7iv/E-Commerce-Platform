@@ -44,6 +44,12 @@
 
 #### Migrating to Microservices
 
+- [ ] API Gateway
+
+  - [ ] Route Requests to Services
+  - [ ] Rate Limiting
+  - [ ] Send Cached Webpages/Data
+
 - [ ] Create Services
 
   - [ ] User Management Service

@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { fetchPoductsController } from "../../../controllers/api/products";
+import { fetchProductsController } from "../../../controllers/api/products";
 
 const router = Router();
 
-router.get("/", fetchPoductsController);
+router.get("/", fetchProductsController);
 
 export default router;
